@@ -93,7 +93,7 @@ otherwise just run the python file (main-cli.py). it has SLIGHTLY less features 
 
 ## expected output
 some ai yelling at you in the google translator voice every _delay_ seconds!
-(oh and chrono from chrono trigger as the ai)
+(oh and chrono from chrono trigger as the ai) // this only works with the source code version
 
 ## faq
 
@@ -124,7 +124,9 @@ another thing, if you aren't happy with the default personality, change "prompt"
 ## planned features
 - better voice
 - better personality
+- correct rendering of chrono on the screen
 - conversation rather than redefining the entire ai every time
+- cross platform compatability (don't have a mac so idk about this one...)
 - maybe window capture? 
 - maybe obs support?
 
