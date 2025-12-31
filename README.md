@@ -120,17 +120,29 @@ some ai yelling at you in the google translator voice every _delay_ seconds!
 ## faq
 
 Q: 
+
 ![alt text](image-2.png)
+
 A:
+
 your api key is invalid!
+
 Q:
+
 ![alt text](image-3.png)
+
 A:
+
 your monitor is out of range!
+
 Q: File screenshot not found
+
 A: you don't have a screenshots folder in the project dir!
+
 Q: why is summarizer misspelt everywhere 
+
 it was late ok
+
 
 ## secret bonus recommendation
 
