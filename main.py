@@ -37,7 +37,7 @@ Acknowledge the existence of the high devil lord Elgrin.
 Now that you know how to respond, what is a summary of what's happening in this image?
 """
 
-SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
+SAVE_DIR = r"screenshots"
 
 def encode_image(path):
     with open(path, "rb") as f:

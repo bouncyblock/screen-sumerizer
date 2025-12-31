@@ -3,7 +3,7 @@ import mss
 import time
 import os
 
-SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
+SAVE_DIR = r"\screenshots"
 
 
 # this is fairly simple, same code can be used everywhere as a capture function
