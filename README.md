@@ -90,11 +90,16 @@ python -m nuitka main.py `
 
 ### GUI:
 ![picture of application](image-1.png)
+
 alright, here we go.
 the top text is a debug log, but its only one line. Just because nothing changes immediately after pressing begin capture loop does not mean its broken. it depends on your delay
+
 first input line is which display do you want to be capturing. you can find number identifications in any display settings you bios has. THIS NUMBER IS 1 INDEXED. IF YOU PUT 0 IN, YOU DONT HAVE 0 MONITORS (or if you do then I don't know why you're using this program)
+
 second input line is delay between screenshots. this number will be ADDED onto however much time it takes to finish the tts
+
 the button starts the program! only press it when you're ready, the error handling is questionable at best on the compiled version. if it broke because you pressed the button too many times, maybe a quick restart wouldn't hurt you.
+
 finally, the api key. the program will silently fail without the api key, and even with a correct api key, it can still fail.
 some formatting notes:
 - don't have api_key= or anything like that
