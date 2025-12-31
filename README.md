@@ -165,7 +165,7 @@ another thing, if you aren't happy with the default personality, change "prompt"
 - maybe obs support?
 
 ## ai use disclaimer
-i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably ai code in the main.py file because if I can reuse a block of code i will.
+i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably a small ai code in the main.py.
 i did not use ai for the readme or commits.
 
 oh and you use ai to generate the answers to whats on your screen
