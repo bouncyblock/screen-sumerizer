@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 from openrouter import OpenRouter
+from gtts import gTTS
+import pygame
 import requests
 import base64
 import os
@@ -9,9 +11,9 @@ import mss
 import time
 
 load_dotenv()
+pygame.mixer.init()
 
 SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
-
 
 def encode_image(path):
     with open(path, "rb") as f:
@@ -62,6 +64,19 @@ while True:
     image_data = encode_image(f"{image_name}") # encode the image for b64
     response = aiResponse(image_data) # input the image to the AI
     result = response.json() # defines as json?
+    resultContent = result["choices"][0]["message"]["content"]
 
     print(f"Status Code: {response.status_code}")
-    print(result["choices"][0]["message"]["content"])
+    print(resultContent)
+
+    tts = gTTS(text=resultContent, lang="en")
+    tts.save("output.mp3")
+    print("Saved output.mp3")
+    
+    pygame.mixer.music.load("output.mp3")
+    pygame.mixer.music.play()
+    #while pygame.mixer.music.get_busy():
+    #    pygame.time.wait(100)
+
+    #os.system("start output.mp3")  # Play the audio file
+    print("Waiting for next capture...")
