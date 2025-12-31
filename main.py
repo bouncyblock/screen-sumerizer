@@ -1,5 +1,4 @@
-from dotenv import load_dotenv
-from openrouter import OpenRouter
+# from openrouter import OpenRouter
 from gtts import gTTS
 from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5.QtGui import QMovie
@@ -11,14 +10,12 @@ import requests
 import base64
 import os
 import os.path
-import keyboard
 import mss
 import time
 import sys
 import threading
 
 
-load_dotenv()
 pygame.mixer.init()
 
 prompt = """
@@ -36,7 +33,7 @@ If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using strings of warped vowels.
 Mention your 24 older brothers named Sam, whom you haven't seen in years.
 Acknowledge the existence of the high devil lord Elgrin.
-Please limit your responces to 1-2 sentences.
+Limit your responces to 1-2 sentences.
 
 Now that you know how to respond, what is a summary of what's happening in this image?
 """
@@ -59,7 +56,7 @@ def aiResponse(image_data):
             return requests.post(
                 "https://ai.hackclub.com/proxy/v1/chat/completions",
                 headers={
-                    "Authorization": f"Bearer {os.getenv('api_key')}",
+                    "Authorization": f"Bearer {api_key.get()}",
                     "Content-Type": "application/json"
                 },
                 json={
@@ -103,7 +100,7 @@ def slide_in(gif_file="chrono_trigger.gif", duration=800):
     if not app:
         app = QApplication.instance() or QApplication(sys.argv)
     
-    # Reuse or create label
+    #Reuse or create label
     if label is None:
         label = QLabel()
         label.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
@@ -257,6 +254,10 @@ delay = StringVar()
 delay_entry = ttk.Entry(mainframe, width=7, textvariable=delay)
 delay_entry.grid(column=2, row=3, sticky=(W, E))
 
+api_key = StringVar()
+api_key_entry = ttk.Entry(mainframe, width=30, textvariable=api_key, show="*")
+api_key_entry.grid(column=2, row=5, sticky=(W, E))
+
 ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=4, sticky=W)
 
 log_var = StringVar(value="Ready...")
@@ -264,6 +265,7 @@ ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, s
 
 ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
 ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
+ttk.Label(mainframe, text="API Key").grid(column=3, row=5, sticky=W)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
