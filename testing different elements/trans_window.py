@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt, QPropertyAnimation, QRect, QTimer
 
+# copilot example code
+
 app = QApplication(sys.argv)
 
 # --- Window setup ---
