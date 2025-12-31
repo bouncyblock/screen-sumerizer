@@ -4,6 +4,8 @@ from gtts import gTTS
 from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt, QPropertyAnimation, QRect
+from tkinter import *
+from tkinter import ttk
 import pygame
 import requests
 import base64
@@ -13,6 +15,7 @@ import keyboard
 import mss
 import time
 import sys
+import threading
 
 
 load_dotenv()
@@ -38,6 +41,10 @@ Now that you know how to respond, what is a summary of what's happening in this 
 """
 
 SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
+
+def log(message):
+    print(message)
+    log_var.set(message)
 
 def encode_image(path):
     with open(path, "rb") as f:
@@ -73,19 +80,19 @@ def aiResponse(image_data):
             )
         except requests.exceptions.SSLError as e:
             if attempt < max_rentries - 1:
-                print(f"SSL Error (attempt {attempt + 1}/{max_rentries}), retrying in 2  seconds...")
+                log(f"SSL Error (attempt {attempt + 1}/{max_rentries}), retrying in 2  seconds...")
                 time.sleep(2)
             else:
                 raise e
         except requests.exceptions.RequestException as e:
-            print(f"Request error: {e}")
+            log(f"Request error: {e}")
             raise
 
 def capture(monitor=1):
     with mss.mss() as sct:
         filename = os.path.join(SAVE_DIR, f"{int(time.time())}.png")
         sct.shot(mon = monitor,output=filename)
-        print("Captured:", filename)
+        log("Captured: " + filename)
         return filename
 
 def slide_in(gif_file="chrono_trigger.gif", duration=800):
@@ -166,7 +173,7 @@ def slide_out(duration=800):
 def get_app():
     global app
     return app
-# print(f"Response Text: {response.text}")
+# log(f"Response Text: {response.text}")
 
 
 # fuck off garbage collection
@@ -175,34 +182,78 @@ anim_out = None
 app = None
 
 
-print("which monitor to capture?")
-userMonitor = int(input())
 
-def main():
+
+def main(event=None):
+    try:
+        monitor_input = monitor.get().strip()
+        if not monitor_input:
+            log("Error: Please enter a monitor number")
+            return
+        userMonitor = int(monitor_input)
+    except ValueError:
+        log("Error: Monitor must be a number")
+        return
+    
+    # run in background thread to prevent hanging
+    thread = threading.Thread(target=main_worker, args=(userMonitor,), daemon=True)
+    thread.start()
+
+def main_worker(userMonitor):
     time.sleep(10) # wait 5 seconds
     image_name = capture(userMonitor) # capture the screen
-    print("Processing image:", image_name) 
+    log("Processing image: " + image_name) 
     image_data = encode_image(image_name) # encode the image for b64
     response = aiResponse(image_data) # input the image to the AI
     result = response.json() # defines as json?
     resultContent = result["choices"][0]["message"]["content"]
 
-    print(f"Status Code: {response.status_code}")
-    print(resultContent)
+    log(f"Status Code: {response.status_code}")
+    log(resultContent)
 
     #pygame.mixer.music.stop()
     tts = gTTS(text=resultContent, lang="en")
     tts.save("output.mp3")
-    print("Saved output.mp3")
+    log("Saved output.mp3")
     slide_in("chrono_trigger.gif")
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         pygame.time.wait(100)
+        root.update()  # keep Tkinter responsive while music plays
     pygame.mixer.music.unload()
     slide_out()
-    #os.system("start output.mp3")  # Play the audio file
-    print("Waiting for next capture...")
+    #os.system("start output.mp3")  # Play the audio file # TS DID NOT WORK
+    log("Waiting for next capture...")
 
-if __name__ == "__main__":
-    main()
+
+
+
+root = Tk()
+root.title("screen summerizer")
+
+
+mainframe = ttk.Frame(root, padding=(3, 3, 12, 12))
+mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+
+monitor = StringVar()
+monitor_entry = ttk.Entry(mainframe, width=7, textvariable=monitor)
+monitor_entry.grid(column=2, row=1, sticky=(W, E))
+
+ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=3, sticky=W)
+
+log_var = StringVar(value="Ready...")
+ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky=(W, E))
+
+ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
+
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+mainframe.columnconfigure(2, weight=1)
+for child in mainframe.winfo_children(): 
+    child.grid_configure(padx=5, pady=5)
+
+monitor_entry.focus()
+root.bind("<Return>", main)
+
+root.mainloop()
