@@ -127,3 +127,7 @@ another thing, if you aren't happy with the default personality, change "prompt"
 - conversation rather than redefining the entire ai every time
 - maybe window capture? 
 - maybe obs support?
+
+## and with that, i'm off.
+did this all in one night with no sleep from midnight to 8am, with some changes at 1pm. i've never felt so burnt out. on the bright side, i have this great screenshot (it was paused for one hour at one point):
+<img width="1917" height="1033" alt="Screenshot 2025-12-31 084333" src="https://github.com/user-attachments/assets/63ea9bde-463f-448a-b905-52f1410fc532" />
