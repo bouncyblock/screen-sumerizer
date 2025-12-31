@@ -89,7 +89,7 @@ python -m nuitka main.py `
 ## how do I use this?
 
 ### GUI:
-![picture of application](image-1.png)
+![picture of application](assets/image-1.png)
 alright, here we go.
 the top text is a debug log, but its only one line. Just because nothing changes immediately after pressing begin capture loop does not mean its broken. it depends on your delay
 first input line is which display do you want to be capturing. you can find number identifications in any display settings you bios has. THIS NUMBER IS 1 INDEXED. IF YOU PUT 0 IN, YOU DONT HAVE 0 MONITORS (or if you do then I don't know why you're using this program)
@@ -115,11 +115,11 @@ some ai yelling at you in the google translator voice every _delay_ seconds!
 ## faq
 
 Q: 
-![alt text](image-2.png)
+![alt text](assets/image-2.png)
 A:
 your api key is invalid!
 Q:
-![alt text](image-3.png)
+![alt text](assets/image-3.png)
 A:
 your monitor is out of range!
 Q: File screenshot not found
