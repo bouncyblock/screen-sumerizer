@@ -5,6 +5,8 @@ import os
 
 SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
 
+# we got the capture fuinction
+
 def capture():
     with mss.mss() as sct:
         filename = os.path.join(SAVE_DIR, f"{int(time.time())}.png")

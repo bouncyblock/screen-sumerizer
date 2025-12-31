@@ -5,6 +5,8 @@ import os
 
 SAVE_DIR = r"C:\Users\willk\screen-sumerizer\screenshots"
 
+
+# this is fairly simple, same code can be used everywhere as a capture function
 while True:
     time.sleep(5)
     with mss.mss() as sct:

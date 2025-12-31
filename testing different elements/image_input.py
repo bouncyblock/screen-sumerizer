@@ -5,6 +5,9 @@ import base64
 import os
 import os.path
 
+# WOOOO this is was the main loop, and is mostly taken from the ai.hackclub.com docs
+# it works great though
+
 load_dotenv()
 
 '''

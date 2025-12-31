@@ -42,19 +42,22 @@ def aiResponse(image_data):
         }
     )
 
-def capture():
+def capture(monitor=1):
     with mss.mss() as sct:
         filename = os.path.join(SAVE_DIR, f"{int(time.time())}.png")
-        sct.shot(output=filename)
+        sct.shot(mon = monitor,output=filename)
         print("Captured:", filename)
         return filename
 
 
 # print(f"Response Text: {response.text}")
 
+print("which monitor to capture?")
+userMonitor = int(input())
+
 while True:
     time.sleep(10) # wait 5 seconds
-    image_name = capture() # capture the screen
+    image_name = capture(userMonitor) # capture the screen
     print("Processing image:", f"C:\\Users\\willk\\screen-sumerizer\\screenshots\\{image_name}") 
     image_data = encode_image(f"{image_name}") # encode the image for b64
     response = aiResponse(image_data) # input the image to the AI
