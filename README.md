@@ -107,6 +107,8 @@ A:
 your monitor is out of range!
 Q: File screenshot not found
 A: you don't have a screenshots folder in the project dir!
+Q: why is summarizer misspelt everywhere 
+it was late ok
 
 ## secret bonus recommendation
 
@@ -115,3 +117,13 @@ if you were to unironically use this software, I'd recommend you set it up on a 
 but ohhhh I can't see the other monitor- use obs to capture the other monitor! its still being rendered in the background. (which does mean your mouse will move off screen into it)
 
 ***not my work*** but a really cool project that works really well with this one.
+
+
+another thing, if you aren't happy with the default personality, change "prompt" in main.py (provided you're using the source code edition). this current personality is based HEAVILY on dougdougs ai ([that project](https://github.com/DougDougGithub/Babagaboosh/tree/main)) which i only discovered halfway though but ultimately decided to use it because my ai prompt was NOT working well.
+
+## planned features
+- better voice
+- better personality
+- conversation rather than redefining the entire ai every time
+- maybe window capture? 
+- maybe obs support?
