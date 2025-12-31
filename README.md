@@ -14,7 +14,24 @@ extract the zip file from the releases tab
 make a screenshots folder in the extracted folder (if its not already there)
 run main.exe
 
-### if you're compiling from source...
+### if you're compiling from source... THIS IS THE GUIDE YOU SHOULD FOLLOW IF THERE IS NOT A COMPILED BINARY FOR YOUR OS
+
+1. make sure you have python 3.11 installed
+2. clone the project (git clone https://github.com/bouncyblock/screen-sumerizer.git)
+3. install the dependencies (pip install gtts pyqt5 pygame requests keyboard mss)
+4. run main.py (python3 main.py)
+If for some reason if fails with not finding screenshots, make a folder called screenshots in the same folder as your main.py
+
+minimal layout required:
+```
+screen-sumerizer
+|- screenshots/
+|- main.py
+|- chrono_trigger.git
+
+```
+
+### alt guide for source if you like pain:
 Good news! All you need is Python 3.11, a COUPLE pip dependencies:
 ```
 python-dotenv (only for cli ver)
@@ -125,6 +142,12 @@ another thing, if you aren't happy with the default personality, change "prompt"
 - cross platform compatability (don't have a mac so idk about this one...)
 - maybe window capture? 
 - maybe obs support?
+
+## ai use disclaimer
+i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably ai code in the main.py file because if I can reuse a block of code i will.
+i did not use ai for the readme or commits.
+
+oh and you use ai to generate the answers to whats on your screen
 
 ## and with that, i'm off.
 did this all in one night with no sleep from midnight to 8am, with some changes at 1pm. i've never felt so burnt out. on the bright side, i have this great screenshot (it was paused for one hour at one point):

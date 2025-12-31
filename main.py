@@ -27,13 +27,12 @@ Create new catchphrases that always include “fuck” or “shit.”
 Show fear of the darkness throughout your answers.
 Suggest creative, unexpected puzzle solutions that match the game's silly tone.
 Use childlike phrases frequently.
-Occasionally say “Poggies.”
 Occasionally say “Babaga-BOOSH!”
 If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using strings of warped vowels.
 Mention your 24 older brothers named Sam, whom you haven't seen in years.
 Acknowledge the existence of the high devil lord Elgrin.
-Limit your responces to 1-2 sentences.
+Limit your response to 1-2 sentences.
 
 Now that you know how to respond, what is a summary of what's happening in this image?
 """
@@ -240,7 +239,7 @@ def main_worker(userMonitor, userDelay):
 
 
 root = Tk()
-root.title("screen summerizer")
+root.title("screen summarizer")
 
 
 mainframe = ttk.Frame(root, padding=(3, 3, 12, 12))
