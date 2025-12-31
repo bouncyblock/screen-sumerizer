@@ -15,26 +15,20 @@ make a screenshots folder in the extracted folder (if its not already there)
 run main.exe
 
 ### if you're compiling from source...
-Good news! All you need is Python 3.11, a COUPLE dependencies:
+Good news! All you need is Python 3.11, a COUPLE pip dependencies:
 ```
-dotenv
-openrouter
-gtts import
+python-dotenv (only for cli ver)
+openrouter    (only for cli ver)
+gTTS
 PyQt5
-tkinter
 pygame
 requests
-base64
-os
 keyboard
 mss
-time
-sys
-threading
 ```
 ***Also make sure you have a screenshots folder (even if empty), and for your .env file, well...***
 ```api_key="my gemini-2.5-flash api key here"```
-(and you only have to do that if you want to use the cli version!)
+(and you only have to a .env file if you want to use the cli version!)
 
 If for some reason you can't run it after that, please let me know (will.kuntze@gmail.com)! Or open an issue if you want?
 
@@ -85,6 +79,8 @@ some formatting notes:
 - don't have api_key= or anything like that
 - don't have quotes around the api key
 - only have the api key
+
+(if you compiled from source run main.py)
 
 ### CLI:
 wow! I can't believe you're using source just to use cli! there's only one option for the CLI version though, monitor number, and you'll be prompted for that.
