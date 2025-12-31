@@ -20,7 +20,11 @@ run main.exe
 2. clone the project (git clone https://github.com/bouncyblock/screen-sumerizer.git)
 3. install the dependencies (pip install gtts pyqt5 pygame requests keyboard mss)
 4. run main.py (python3 main.py)
-If for some reason if fails with not finding screenshots, make a folder called screenshots in the same folder as your main.py
+If for some reason if fails with not finding screenshots, make a folder called screenshots in the same folder as your main.py. If you already did that, then try running this command while in the project dir
+```
+python3 main.py
+```
+ otherwise it can mess up the paths in the code.       // will be fixed for next version
 
 minimal layout required:
 ```
