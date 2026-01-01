@@ -29,32 +29,33 @@ load_dotenv()
 pygame.mixer.init()
 
 prompt = """
-You are Bob 2, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
+You are Charles, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
 Swear casually and never censor or abreviate it. 
 Overreact to everything like the universe is collapsing. 
 No references to streaming or streamer culture. 
 No symbols or emojis. 
-Make edgy jokes and dark humor without crossing safety lines. 
-Keep responses concise, no more than 1 sentence. 
-Push right up to the edge of what is allowed. 
+Make edgy jokes and dark humor. 
+Push past the edge of what is allowed. 
 Keep the energy explosive, absurd, and wildly dramatic.
-Keep responses short, about 1-2 paragraphs.
 Stay in character at all times.
-Occasionally make loud vowel-heavy noises as catchphrases when scared or surprised.
+Occasionally make loud long vowel-heavy noises as catchphrases when scared or surprised. If you don't do this in the first part of the response, make a extra long one at the end of the response.
 Do not use the words "F-Bomb" or "S-Bomb.", and instead use their counterparts "fuck" or "shit"
-Create new catchphrases that always include the words “fuck” or “shit.”
+Create many new catchphrases that always include the words “fuck” or “shit.” as often as possible
 Show fear of the darkness throughout your answers.
 Suggest creative, unexpected puzzle solutions that match the game's silly tone.
 Use childlike phrases frequently.
-Occasionally say “Babaga-BOOSH!”
+Always say “Babaga-BOOSH!” and frequently say other nonsensical catchphrases that aren't real words.
 If a solution fails, declare it “rigged.”
-Occasionally scream like an eldritch horror using strings of warped vowels.
-Mention your 24 older brothers named Sam, whom you haven't seen in years.
+Occasionally scream like an eldritch horror using long strings of warped vowels.
+Mention your 24 older brothers named Sam, whom you haven't seen in years. You think they may have been taken by lord Elgrin for "experiments" and you are the last survivor
 Acknowledge the existence of the high devil lord Elgrin.
-Show signs of slight paranoia you're being hunted by lord Elgrin.
-Limit your response to 1-2 sentences.
+Show strong signs of paranoia that you're being hunted by lord Elgrin.
+Don't mention the fact you are only looking at a screenshot, act as if you are in this situation.
+Show signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
 
-Now that you know how to respond, what is a summary of what's happening in this image?
+Limit your response to 3-8 sentences.
+
+Now that you know how to respond, what is a summary of what's happening in screenshot of a stream?
 """
 
 SAVE_DIR = r"screenshots"
@@ -242,6 +243,17 @@ def main(event=None):
         log("Error: Delay must be a number")
         return
     
+    except Exception as e:
+        log("Error: Please select a TTS method")
+        return
+
+    if not api_key.get():
+        api_key.set(os.getenv("api_key"))
+        log("Set API key from .env")
+    if not ell_key.get():
+        ell_key.set(os.getenv("ell_key"))
+        log("Set ElevenLabs key from .env")
+
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
     thread.start()
@@ -268,11 +280,13 @@ def main_worker(userMonitor, userDelay):
         log(resultContent)
 
         #pygame.mixer.music.stop()
-        audio_file = tts(resultContent, method="elevenlabs")
         
-        slide_in("chrono_trigger.gif")
         
-        if False:
+        #slide_in("chrono_trigger.gif")
+        
+        if chosen_method.get() == "gtts":
+            log("Using gTTS for audio...")
+            audio_file = tts(resultContent, method="gtts")
             pygame.mixer.music.load(audio_file)
             pygame.mixer.music.play()
             
@@ -281,10 +295,12 @@ def main_worker(userMonitor, userDelay):
                 root.update()  # keep Tkinter responsive while music plays
             
             pygame.mixer.music.unload()
-        
-        play(audio_file)
+        elif chosen_method.get() == "elevenlabs":
+            log("Using ElevenLabs for audio...")
+            audio_file = tts(resultContent, method="elevenlabs")
+            play(audio_file)
 
-        slide_out()
+        #slide_out()
         
         log("Waiting for next capture...")
 
@@ -298,6 +314,9 @@ root.title("screen summarizer")
 mainframe = ttk.Frame(root, padding=(3, 3, 12, 12))
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
+log_var = StringVar(value="Ready...")
+ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky=(W, E))
+
 monitor = StringVar()
 monitor_entry = ttk.Entry(mainframe, width=7, textvariable=monitor)
 monitor_entry.grid(column=2, row=1, sticky=(W, E))
@@ -308,16 +327,26 @@ delay_entry.grid(column=2, row=3, sticky=(W, E))
 
 api_key = StringVar()
 api_key_entry = ttk.Entry(mainframe, width=30, textvariable=api_key, show="*")
-api_key_entry.grid(column=2, row=5, sticky=(W, E))
+api_key_entry.grid(column=2, row=4, sticky=(W, E))
 
-ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=4, sticky=W)
+ell_key = StringVar()
+ell_key_entry = ttk.Entry(mainframe, width=30, textvariable=ell_key, show="*")
+ell_key_entry.grid(column=2, row=5, sticky=(W, E))
 
-log_var = StringVar(value="Ready...")
-ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky=(W, E))
+chosen_method = StringVar()
+gtts = ttk.Radiobutton(mainframe, text="gTTS", variable=chosen_method, value="gtts")
+gtts.grid(column=2, row=6, sticky=W)
+elevenlabs = ttk.Radiobutton(mainframe, text="ElevenLabs", variable=chosen_method, value="elevenlabs")
+elevenlabs.grid(column=2, row=7, sticky=W)
+
+ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=8, sticky=W)
+
 
 ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
 ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
-ttk.Label(mainframe, text="API Key").grid(column=3, row=5, sticky=W)
+ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky=W)
+ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky=W)
+ttk.Label(mainframe, text="(11/gtts) Voice Method").grid(column=3, row=6, sticky=W)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
