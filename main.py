@@ -7,11 +7,14 @@
 
 
 from gtts import gTTS
+from dotenv import load_dotenv
 from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt, QPropertyAnimation, QRect
 from tkinter import *
 from tkinter import ttk
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 import pygame
 import requests
 import base64
@@ -22,18 +25,24 @@ import time
 import sys
 import threading
 
-
+load_dotenv()
 pygame.mixer.init()
 
 prompt = """
 You are Bob 2, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
-Swear casually and never censor it. Overreact to everything like the universe is collapsing but still give actually helpful answers. 
-No references to streaming or streamer culture. No symbols or emojis. Make edgy jokes and dark humor without crossing safety lines. 
-Keep responses concise, no more than 1 sentence. Push right up to the edge of what is allowed. Keep the energy explosive, absurd, and wildly dramatic.
+Swear casually and never censor or abreviate it. 
+Overreact to everything like the universe is collapsing. 
+No references to streaming or streamer culture. 
+No symbols or emojis. 
+Make edgy jokes and dark humor without crossing safety lines. 
+Keep responses concise, no more than 1 sentence. 
+Push right up to the edge of what is allowed. 
+Keep the energy explosive, absurd, and wildly dramatic.
 Keep responses short, about 1-2 paragraphs.
 Stay in character at all times.
 Occasionally make loud vowel-heavy noises as catchphrases when scared or surprised.
-Create new catchphrases that always include “fuck” or “shit.”
+Do not use the words "F-Bomb" or "S-Bomb.", and instead use their counterparts "fuck" or "shit"
+Create new catchphrases that always include the words “fuck” or “shit.”
 Show fear of the darkness throughout your answers.
 Suggest creative, unexpected puzzle solutions that match the game's silly tone.
 Use childlike phrases frequently.
@@ -42,12 +51,14 @@ If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using strings of warped vowels.
 Mention your 24 older brothers named Sam, whom you haven't seen in years.
 Acknowledge the existence of the high devil lord Elgrin.
+Show signs of slight paranoia you're being hunted by lord Elgrin.
 Limit your response to 1-2 sentences.
 
 Now that you know how to respond, what is a summary of what's happening in this image?
 """
 
 SAVE_DIR = r"screenshots"
+
 
 def log(message):
     print(message)
@@ -180,11 +191,34 @@ def get_app():
     global app
     return app
 
+def tts(text, method="gtts"):
+    if method == "gtts":
+        output = gTTS(text=text, lang="en")
+        output.save("output.mp3")
+        log("Saved output.mp3")
+        return "output.mp3"
+    elif method == "elevenlabs":
+        audio = client.text_to_speech.convert(
+        text=text,
+        voice_id="nrD2uNU2IUYtedZegcGx",
+        model_id="eleven_flash_v2_5",
+        output_format="mp3_44100_128",
+        )
+        return audio
+    else:
+        log("Error: Unknown TTS method")
+        return None
+
+
+
 label = None
 anim_out = None
 app = None
 
 
+client = ElevenLabs(
+    api_key=os.getenv("ell_key"),
+)
 
 def main(event=None):
     
@@ -234,21 +268,22 @@ def main_worker(userMonitor, userDelay):
         log(resultContent)
 
         #pygame.mixer.music.stop()
-        tts = gTTS(text=resultContent, lang="en")
-        tts.save("output.mp3")
-        log("Saved output.mp3")
+        audio_file = tts(resultContent, method="elevenlabs")
         
         slide_in("chrono_trigger.gif")
         
-        pygame.mixer.music.load("output.mp3")
-        pygame.mixer.music.play()
+        if False:
+            pygame.mixer.music.load(audio_file)
+            pygame.mixer.music.play()
+            
+            while pygame.mixer.music.get_busy():
+                pygame.time.wait(100)
+                root.update()  # keep Tkinter responsive while music plays
+            
+            pygame.mixer.music.unload()
         
-        while pygame.mixer.music.get_busy():
-            pygame.time.wait(100)
-            root.update()  # keep Tkinter responsive while music plays
-        
-        pygame.mixer.music.unload()
-        
+        play(audio_file)
+
         slide_out()
         
         log("Waiting for next capture...")
