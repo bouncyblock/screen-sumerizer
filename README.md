@@ -1,7 +1,19 @@
 # screen summarizer
 ## What if you could have the AI stream checker that DougDoug used in one of his [recent popular clips?](https://www.youtube.com/shorts/EYF_fvP8o8M)? 
 ![hackatime badge](https://hackatime-badge.hackclub.com/U09GRHV7Y80/screen-sumerizer)
+```
+notes for hack club people
+submitted for fudgefudgefudge with my hour count at 6.2h on project
+spent about another hour with readme etc.
+any other time spent is currently in the beta branch (maybe to be included with flavourtown for extending the functionality of an already exsisting application?)
 
+current features in the beta branch:
+removal of chrono
+restructuring of files
+11labs api integration
+improved gui
+improved prompt
+```
 Well, APPARENTLY YOU ALREADY COULD because halfway through this project I realized that his [github account](https://github.com/DougDougGithub/Babagaboosh/tree/main) is public. BUT I FINISHED MY VERSION ANYWAYS.
 
 This app basically works by looking at one of your monitors (or a virtual monitor using [this repo](https://github.com/VirtualDrivers/Virtual-Display-Driver), which is what I recommend if you don't what summaries of your own screen), sending it to gemini-2.5-flash, sending that output to gTTS (google TTS, aka the Google Translate TTS), then playing it using pygame.
