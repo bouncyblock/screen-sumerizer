@@ -15,6 +15,8 @@ from tkinter import *
 from tkinter import ttk
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
+from character import *
+from utils import *
 import pygame
 import requests
 import base64
@@ -24,6 +26,7 @@ import mss
 import time
 import sys
 import threading
+
 
 load_dotenv()
 pygame.mixer.init()
@@ -61,14 +64,6 @@ Now that you know how to respond, what is a summary of what's happening in scree
 SAVE_DIR = r"screenshots"
 
 
-def log(message):
-    print(message)
-    log_var.set(message)
-
-def encode_image(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-
 def aiResponse(image_data):
     max_rentries = 10
     for attempt in range(max_rentries):
@@ -98,105 +93,19 @@ def aiResponse(image_data):
             )
         except requests.exceptions.SSLError as e:
             if attempt < max_rentries - 1:
-                log(f"SSL Error (attempt {attempt + 1}/{max_rentries}), retrying in 2  seconds...")
+                log(f"SSL Error (attempt {attempt + 1}/{max_rentries}), retrying in 2  seconds...", log_var)
                 time.sleep(2)
             else:
                 raise e
         except requests.exceptions.RequestException as e:
-            log(f"Request error: {e}")
+            log(f"Request error: {e}", log_var)
             raise
-
-def capture(monitor=1):
-    with mss.mss() as sct:
-        filename = os.path.join(SAVE_DIR, f"{int(time.time())}.png")
-        sct.shot(mon = monitor,output=filename)
-        log("Captured: " + filename)
-        return filename
-
-def slide_in(gif_file="chrono_trigger.gif", duration=800):
-    global label, app
-    
-    # Create app if it doesn't exist
-    if not app:
-        app = QApplication.instance() or QApplication(sys.argv)
-    
-    #Reuse or create label
-    if label is None:
-        label = QLabel()
-        label.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
-        label.setAttribute(Qt.WA_TranslucentBackground)
-    
-    # --- Load GIF ---
-    movie = QMovie(gif_file)
-    label.setMovie(movie)
-    movie.start()
-    
-    # --- Screen + GIF geometry ---
-    screen = app.primaryScreen().geometry()
-    screen_w, screen_h = screen.width(), screen.height()
-    
-    movie.jumpToFrame(0)
-    gif_w = movie.currentImage().width()
-    gif_h = movie.currentImage().height()
-    
-    start_x = (screen_w - gif_w) // 2
-    start_y = screen_h
-    end_y = screen_h - gif_h - 50
-    
-    start_rect = QRect(start_x, start_y, gif_w, gif_h)
-    end_rect = QRect(start_x, end_y, gif_w, gif_h)
-    
-    label.setGeometry(start_rect)
-    label.show()
-    
-    # --- Slide in animation ---
-    anim_in = QPropertyAnimation(label, b"geometry")
-    anim_in.setDuration(duration)
-    anim_in.setStartValue(start_rect)
-    anim_in.setEndValue(end_rect)
-    anim_in.start()
-    
-    label.start_x = start_x
-    label.gif_h = gif_h
-    label.end_rect = end_rect
-    
-    # Process events during animation
-    start_time = time.time()
-    while time.time() - start_time < duration / 1000.0:
-        app.processEvents()
-        time.sleep(0.01)
-
-def slide_out(duration=800):
-
-    global label, anim_out, app
-    
-    if not label or not app:
-        return
-    
-    end_rect2 = QRect(label.start_x, -label.gif_h, label.end_rect.width(), label.end_rect.height())
-    
-    anim_out = QPropertyAnimation(label, b"geometry")
-    anim_out.setDuration(duration)
-    anim_out.setStartValue(label.end_rect)
-    anim_out.setEndValue(end_rect2)
-    anim_out.finished.connect(lambda: label.hide())
-    anim_out.start()
-    
-    # Process events during animation
-    start_time = time.time()
-    while time.time() - start_time < duration / 1000.0:
-        app.processEvents()
-        time.sleep(0.01)
-
-def get_app():
-    global app
-    return app
 
 def tts(text, method="gtts"):
     if method == "gtts":
         output = gTTS(text=text, lang="en")
         output.save("output.mp3")
-        log("Saved output.mp3")
+        log("Saved output.mp3", log_var)
         return "output.mp3"
     elif method == "elevenlabs":
         audio = client.text_to_speech.convert(
@@ -207,19 +116,10 @@ def tts(text, method="gtts"):
         )
         return audio
     else:
-        log("Error: Unknown TTS method")
+        log("Error: Unknown TTS method", log_var)
         return None
 
 
-
-label = None
-anim_out = None
-app = None
-
-
-client = ElevenLabs(
-    api_key=os.getenv("ell_key"),
-)
 
 def main(event=None):
     
@@ -227,16 +127,16 @@ def main(event=None):
     try:
         monitor_input = monitor.get().strip()
         if not monitor_input:
-            log("Error: Please enter a monitor number")
+            log("Error: Please enter a monitor number", log_var)
             return
         userMonitor = int(monitor_input)
     except ValueError:
-        log("Error: Monitor must be a number")
+        log("Error: Monitor must be a number", log_var)
         return
     try:
         delay_input = delay.get().strip()
         if not delay_input:
-            log("Error: Please enter a delay")
+            log("Error: Please enter a delay", log_var)
             return
         userDelay = int(delay_input)
     except ValueError:
@@ -244,40 +144,38 @@ def main(event=None):
         return
     
     except Exception as e:
-        log("Error: Please select a TTS method")
+        log("Error: Please select a TTS method", log_var)
         return
 
     if not api_key.get():
         api_key.set(os.getenv("api_key"))
-        log("Set API key from .env")
+        log("Set API key from .env", log_var)
     if not ell_key.get():
         ell_key.set(os.getenv("ell_key"))
-        log("Set ElevenLabs key from .env")
+        log("Set ElevenLabs key from .env", log_var)
 
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
     thread.start()
 
 
-
-
 def main_worker(userMonitor, userDelay):
     while True:
-        log("start main_worker loop")
+        log("start main_worker loop", log_var)
         
         time.sleep(userDelay) # wait for delay
-        log("made it past delay chat")
+        log("made it past delay chat", log_var)
 
         image_name = capture(userMonitor) # capture the screen
-        log("Processing image: " + image_name) 
+        log("Processing image: " + image_name, log_var) 
         image_data = encode_image(image_name) # encode the image for b64
         
         response = aiResponse(image_data) # input the image to the AI
         result = response.json() # defines as json?
         resultContent = result["choices"][0]["message"]["content"]
 
-        log(f"Status Code: {response.status_code}")
-        log(resultContent)
+        log(f"Status Code: {response.status_code}", log_var)
+        log(resultContent, log_var)
 
         #pygame.mixer.music.stop()
         
@@ -285,7 +183,7 @@ def main_worker(userMonitor, userDelay):
         #slide_in("chrono_trigger.gif")
         
         if chosen_method.get() == "gtts":
-            log("Using gTTS for audio...")
+            log("Using gTTS for audio...", log_var)
             audio_file = tts(resultContent, method="gtts")
             pygame.mixer.music.load(audio_file)
             pygame.mixer.music.play()
@@ -296,15 +194,22 @@ def main_worker(userMonitor, userDelay):
             
             pygame.mixer.music.unload()
         elif chosen_method.get() == "elevenlabs":
-            log("Using ElevenLabs for audio...")
+            log("Using ElevenLabs for audio...", log_var)
             audio_file = tts(resultContent, method="elevenlabs")
             play(audio_file)
 
         #slide_out()
         
-        log("Waiting for next capture...")
+        log("Waiting for next capture...", log_var)
+
+client = ElevenLabs(
+    api_key=os.getenv("ell_key"),
+)
 
 
+label = None
+anim_out = None
+app = None
 
 
 root = Tk()
