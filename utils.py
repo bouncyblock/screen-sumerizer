@@ -19,3 +19,12 @@ def capture(monitor=1, SAVE_DIR="screenshots"):
         sct.shot(mon = monitor,output=filename)
         log("Captured: " + filename)
         return filename
+
+def clear_screenshots(SAVE_DIR="screenshots"):
+    for file in os.listdir(SAVE_DIR):
+        file_path = os.path.join(SAVE_DIR, file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            log(f"Error deleting file {file_path}: {e}")

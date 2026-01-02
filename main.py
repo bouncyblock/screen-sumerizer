@@ -62,7 +62,8 @@ Now that you know how to respond, what is a summary of what's happening in scree
 """
 
 SAVE_DIR = r"screenshots"
-
+if not os.path.exists(SAVE_DIR): # this fixes error if screenshots dir doesn't exist
+    os.makedirs(SAVE_DIR)
 
 def aiResponse(image_data):
     max_rentries = 10
@@ -104,9 +105,9 @@ def aiResponse(image_data):
 def tts(text, method="gtts"):
     if method == "gtts":
         output = gTTS(text=text, lang="en")
-        output.save("output.mp3")
-        log("Saved output.mp3", log_var)
-        return "output.mp3"
+        output.save("temp/output.mp3")
+        log("Saved temp/output.mp3", log_var)
+        return "temp/output.mp3"
     elif method == "elevenlabs":
         audio = client.text_to_speech.convert(
         text=text,
@@ -245,6 +246,8 @@ elevenlabs = ttk.Radiobutton(mainframe, text="ElevenLabs", variable=chosen_metho
 elevenlabs.grid(column=2, row=7, sticky=W)
 
 ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=8, sticky=W)
+
+ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=3, row=9, sticky=W)
 
 
 ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
