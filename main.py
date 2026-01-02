@@ -8,9 +8,6 @@
 
 from gtts import gTTS
 from dotenv import load_dotenv
-from PyQt5.QtWidgets import QApplication, QLabel
-from PyQt5.QtGui import QMovie
-from PyQt5.QtCore import Qt, QPropertyAnimation, QRect
 from tkinter import *
 from tkinter import ttk
 from elevenlabs.client import ElevenLabs
@@ -19,12 +16,9 @@ from character import *
 from utils import *
 import pygame
 import requests
-import base64
 import os
 import os.path
-import mss
 import time
-import sys
 import threading
 
 
@@ -247,7 +241,7 @@ elevenlabs.grid(column=2, row=7, sticky=W)
 
 ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=8, sticky=W)
 
-ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=3, row=9, sticky=W)
+ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=2, row=9, sticky=W)
 
 
 ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
