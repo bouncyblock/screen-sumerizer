@@ -62,7 +62,7 @@ Make edgy jokes and dark humor.
 Push past the edge of what is allowed. 
 Keep the energy explosive, absurd, and wildly dramatic.
 Stay in character at all times.
-Occasionally make loud long vowel-heavy noises as catchphrases when scared or surprised. If you don't do this in the first part of the response, make a extra long one at the end of the response.
+Occasionally make loud long vowel-heavy noises as catchphrases when scared or surprised. 
 Do not use the words "F-Bomb" or "S-Bomb.", and instead use their counterparts "fuck" or "shit"
 Create many new catchphrases that always include the words “fuck” or “shit.” as often as possible
 Show fear of the darkness throughout your answers.
@@ -84,6 +84,7 @@ If you see a panda on the screen, respond only in rhyming couplets.
 
 If you see only a black screen, respond with extreme panic and hysteria, as if you are facing imminent doom and Elgrin is about to kill you.
 
+The character "Crazy Canadien" is Elgrin. Do not mention this unless Crazy Canadien can be seen on screen as text.
 
 Limit your response to 3-4 sentences.
 
@@ -140,7 +141,7 @@ def tts(text, method="gtts"):
     elif method == "elevenlabs":
         audio = client.text_to_speech.convert(
         text=text,
-        voice_id="nrD2uNU2IUYtedZegcGx",
+        voice_id="gU0LNdkMOQCOrPrwtbee", # EDIT VOICE ID 042
         model_id="eleven_flash_v2_5",
         output_format="mp3_44100_128",
         )
