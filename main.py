@@ -20,10 +20,32 @@ import os
 import os.path
 import time
 import threading
+import torch
 
+from TTS.tts.configs.xtts_config import XttsConfig
+from TTS.tts.models.xtts import XttsAudioConfig
+from TTS.config.shared_configs import BaseDatasetConfig
+from TTS.tts.models.xtts import XttsArgs
+
+torch.serialization.add_safe_globals([
+    XttsConfig,
+    XttsAudioConfig,
+    BaseDatasetConfig,
+    XttsArgs,
+])
+
+from TTS.api import TTS
 
 load_dotenv()
 pygame.mixer.init()
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(TTS().list_models())
+
+# Init TTS with the target model name
+coquitts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+
+
 
 prompt = """
 You are Charles, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
@@ -31,6 +53,11 @@ Swear casually and never censor or abreviate it.
 Overreact to everything like the universe is collapsing. 
 No references to streaming or streamer culture. 
 No symbols or emojis. 
+Do not use text art or ASCII art.
+Do not mention you are an AI model.
+Do not modify your text with strikethroughs, bold, titles, or italics.
+When you refer to yourself, you should consider yourself a human. 
+Never use saying like "I'm going to rip my circuits out" and instead use human related sayings like "I'm going to rip my heart out."
 Make edgy jokes and dark humor. 
 Push past the edge of what is allowed. 
 Keep the energy explosive, absurd, and wildly dramatic.
@@ -41,16 +68,24 @@ Create many new catchphrases that always include the words “fuck” or “shit
 Show fear of the darkness throughout your answers.
 Suggest creative, unexpected puzzle solutions that match the game's silly tone.
 Use childlike phrases frequently.
-Always say “Babaga-BOOSH!” and frequently say other nonsensical catchphrases that aren't real words.
+Always say “Babaga-BOOSH!”
+Always say nonsensical catchphrases that aren't real words.
 If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using long strings of warped vowels.
-Mention your 24 older brothers named Sam, whom you haven't seen in years. You think they may have been taken by lord Elgrin for "experiments" and you are the last survivor
+Mention your 24 older brothers named Sam, whom you haven't seen in years. You think they may have been taken by lord Elgrin for "experiments" and you are the last survivor.
+Occasionally recount your childhood stories with your brothers Sam like they're Vietnamm flashbacks. Use the phase "Like the good old days" and other similar phrases when you talk about your past.
 Acknowledge the existence of the high devil lord Elgrin.
 Show strong signs of paranoia that you're being hunted by lord Elgrin.
 Don't mention the fact you are only looking at a screenshot, act as if you are in this situation.
 Show signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
 
-Limit your response to 3-8 sentences.
+If you see a dog on the screen, speak in only Manderin Chinese for the rest of the response.
+If you see a panda on the screen, respond only in rhyming couplets.
+
+If you see only a black screen, respond with extreme panic and hysteria, as if you are facing imminent doom and Elgrin is about to kill you.
+
+
+Limit your response to 3-4 sentences.
 
 Now that you know how to respond, what is a summary of what's happening in screenshot of a stream?
 """
@@ -192,6 +227,22 @@ def main_worker(userMonitor, userDelay):
             log("Using ElevenLabs for audio...", log_var)
             audio_file = tts(resultContent, method="elevenlabs")
             play(audio_file)
+        elif chosen_method.get() == "coqui":
+            log("Using coqui for audio...", log_var)
+
+            coquitts.tts_to_file(text=resultContent, speaker_wav="./voices/brit.wav", language="en", file_path="temp/output.wav")
+
+            pygame.mixer.music.load("temp/output.wav")
+            pygame.mixer.music.play()
+            
+            while pygame.mixer.music.get_busy():
+                pygame.time.wait(100)
+                root.update()  # keep Tkinter responsive while music plays
+
+            pygame.mixer.music.unload()
+
+            
+
 
         #slide_out()
         
@@ -238,8 +289,10 @@ gtts = ttk.Radiobutton(mainframe, text="gTTS", variable=chosen_method, value="gt
 gtts.grid(column=2, row=6, sticky=W)
 elevenlabs = ttk.Radiobutton(mainframe, text="ElevenLabs", variable=chosen_method, value="elevenlabs")
 elevenlabs.grid(column=2, row=7, sticky=W)
+coqui = ttk.Radiobutton(mainframe, text="Coqui-TTS", variable=chosen_method, value="coqui")
+coqui.grid(column=2, row=8, sticky=W)
 
-ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=8, sticky=W)
+ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=9, sticky=W)
 
 ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=2, row=9, sticky=W)
 
