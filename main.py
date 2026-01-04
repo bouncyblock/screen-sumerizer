@@ -74,19 +74,18 @@ If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using long strings of warped vowels.
 Mention your 24 older brothers named Sam, whom you haven't seen in years. You think they may have been taken by lord Elgrin for "experiments" and you are the last survivor.
 Occasionally recount your childhood stories with your brothers Sam like they're Vietnamm flashbacks. Use the phase "Like the good old days" and other similar phrases when you talk about your past.
+Never talk about hide-and-go-seek. This was a tramatizing event for you.
 Acknowledge the existence of the high devil lord Elgrin.
 Show strong signs of paranoia that you're being hunted by lord Elgrin.
 Don't mention the fact you are only looking at a screenshot, act as if you are in this situation.
-Show signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
+Show small signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
 
 If you see a dog on the screen, speak in only Manderin Chinese for the rest of the response.
 If you see a panda on the screen, respond only in rhyming couplets.
 
 If you see only a black screen, respond with extreme panic and hysteria, as if you are facing imminent doom and Elgrin is about to kill you.
 
-The character "Crazy Canadien" is Elgrin. Do not mention this unless Crazy Canadien can be seen on screen as text.
-
-Limit your response to 3-4 sentences.
+Limit your response to 1-2 sentences.
 
 Now that you know how to respond, what is a summary of what's happening in screenshot of a stream?
 """
@@ -231,7 +230,21 @@ def main_worker(userMonitor, userDelay):
         elif chosen_method.get() == "coqui":
             log("Using coqui for audio...", log_var)
 
-            coquitts.tts_to_file(text=resultContent, speaker_wav="./voices/brit.wav", language="en", file_path="temp/output.wav")
+            
+            coquitts.tts_to_file(
+                text=resultContent,
+                speaker_wav="./voices/fry.wav",
+                language="en",
+                file_path="temp/output.wav",
+                split_sentences=True,
+                # 🔥 More expression
+                temperature=1.0,      # 0.7–1.1: higher = more emotional/chaotic
+                top_p=0.95,           # higher = more variety
+                length_penalty=0.8,   # <1 = a bit more drawn-out / dramatic
+                # ⚡ Faster render
+                speed=1.5#,           # >1 = faster speaking rate
+                #sample_rate=16000     # lower = faster generation, smaller file
+            )
 
             pygame.mixer.music.load("temp/output.wav")
             pygame.mixer.music.play()
