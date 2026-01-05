@@ -1,8 +1,3 @@
-- [] message memory
-- [] personality json loading
-- [] conversation logging
-
-- [] organize prompt
-
-
-- [] discord bot
+- [] json loading 
+- [] improved UX
+- [] don't force 11labs
