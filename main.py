@@ -12,7 +12,6 @@ from tkinter import *
 from tkinter import ttk
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
-from character import *
 from utils import *
 import pygame
 import requests
