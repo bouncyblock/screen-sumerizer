@@ -2,10 +2,13 @@
 # 
 # to use this, you will need a HC API key with access to gemini-2.5-flash
 # the .env file should contain:
-# API_KEY=your_api_key_here
-# ELL_KEY=your_ell_key_here
-
-
+# api_key=your_api_key_here
+# ell_key=your_ell_key_here
+# ell_voice_id=your_11labs_voice_id_here
+# these can be inputted in the program, this will just speed it up :D
+#
+# please see readme for more instructions
+#
 
 from dotenv import load_dotenv
 from tkinter import *
