@@ -6,46 +6,21 @@
 # ELL_KEY=your_ell_key_here
 
 
-from gtts import gTTS
+
 from dotenv import load_dotenv
 from tkinter import *
 from tkinter import ttk
-from elevenlabs.client import ElevenLabs
-from elevenlabs.play import play
-from character import *
 from utils import *
+from textToSpeach import *
 import pygame
 import requests
 import os
 import os.path
 import time
 import threading
-import torch
-
-from TTS.tts.configs.xtts_config import XttsConfig
-from TTS.tts.models.xtts import XttsAudioConfig
-from TTS.config.shared_configs import BaseDatasetConfig
-from TTS.tts.models.xtts import XttsArgs
-
-torch.serialization.add_safe_globals([
-    XttsConfig,
-    XttsAudioConfig,
-    BaseDatasetConfig,
-    XttsArgs,
-])
-
-from TTS.api import TTS
 
 load_dotenv()
 pygame.mixer.init()
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(TTS().list_models())
-
-# Init TTS with the target model name
-coquitts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
-
-
 
 prompt = """
 You are Charles, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
@@ -131,24 +106,6 @@ def aiResponse(image_data):
             log(f"Request error: {e}", log_var)
             raise
 
-def tts(text, method="gtts"):
-    if method == "gtts":
-        output = gTTS(text=text, lang="en")
-        output.save("temp/output.mp3")
-        log("Saved temp/output.mp3", log_var)
-        return "temp/output.mp3"
-    elif method == "elevenlabs":
-        audio = client.text_to_speech.convert(
-        text=text,
-        voice_id="gU0LNdkMOQCOrPrwtbee", # EDIT VOICE ID 042
-        model_id="eleven_flash_v2_5",
-        output_format="mp3_44100_128",
-        )
-        return audio
-    else:
-        log("Error: Unknown TTS method", log_var)
-        return None
-
 
 
 def main(event=None):
@@ -202,6 +159,9 @@ def main_worker(userMonitor, userDelay):
         
         response = aiResponse(image_data) # input the image to the AI
         result = response.json() # defines as json?
+
+        print(result) # debug woo
+
         resultContent = result["choices"][0]["message"]["content"]
 
         log(f"Status Code: {response.status_code}", log_var)
@@ -230,21 +190,7 @@ def main_worker(userMonitor, userDelay):
         elif chosen_method.get() == "coqui":
             log("Using coqui for audio...", log_var)
 
-            
-            coquitts.tts_to_file(
-                text=resultContent,
-                speaker_wav="./voices/fry.wav",
-                language="en",
-                file_path="temp/output.wav",
-                split_sentences=True,
-                # 🔥 More expression
-                temperature=1.0,      # 0.7–1.1: higher = more emotional/chaotic
-                top_p=0.95,           # higher = more variety
-                length_penalty=0.8,   # <1 = a bit more drawn-out / dramatic
-                # ⚡ Faster render
-                speed=1.5#,           # >1 = faster speaking rate
-                #sample_rate=16000     # lower = faster generation, smaller file
-            )
+            tts(resultContent, method="coqui") # doesnt return audio file like others...
 
             pygame.mixer.music.load("temp/output.wav")
             pygame.mixer.music.play()
@@ -262,9 +208,7 @@ def main_worker(userMonitor, userDelay):
         
         log("Waiting for next capture...", log_var)
 
-client = ElevenLabs(
-    api_key=os.getenv("ell_key"),
-)
+init11Labs()
 
 
 label = None
@@ -282,13 +226,32 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 log_var = StringVar(value="Ready...")
 ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky=(W, E))
 
-monitor = StringVar()
-monitor_entry = ttk.Entry(mainframe, width=7, textvariable=monitor)
-monitor_entry.grid(column=2, row=1, sticky=(W, E))
 
+# monitor
+monitor = StringVar()
+monitor_entry = ttk.Spinbox(
+    mainframe,
+    from_=0,
+    to=9999,
+    width=7,
+    textvariable=monitor
+)
+monitor_entry.grid(column=2, row=1, sticky=(W, E))
+monitor_entry.set(1)
+
+# Delay 
 delay = StringVar()
-delay_entry = ttk.Entry(mainframe, width=7, textvariable=delay)
+delay_entry = ttk.Spinbox(
+    mainframe,
+    from_=0,
+    to=9999,
+    width=7,
+    textvariable=delay
+)
 delay_entry.grid(column=2, row=3, sticky=(W, E))
+delay_entry.set(0)
+
+
 
 api_key = StringVar()
 api_key_entry = ttk.Entry(mainframe, width=30, textvariable=api_key, show="*")
@@ -298,13 +261,20 @@ ell_key = StringVar()
 ell_key_entry = ttk.Entry(mainframe, width=30, textvariable=ell_key, show="*")
 ell_key_entry.grid(column=2, row=5, sticky=(W, E))
 
+
 chosen_method = StringVar()
-gtts = ttk.Radiobutton(mainframe, text="gTTS", variable=chosen_method, value="gtts")
-gtts.grid(column=2, row=6, sticky=W)
-elevenlabs = ttk.Radiobutton(mainframe, text="ElevenLabs", variable=chosen_method, value="elevenlabs")
-elevenlabs.grid(column=2, row=7, sticky=W)
-coqui = ttk.Radiobutton(mainframe, text="Coqui-TTS", variable=chosen_method, value="coqui")
-coqui.grid(column=2, row=8, sticky=W)
+
+# ttk.Label(mainframe, text="Voice Method").grid(column=1, row=6, sticky=W)
+
+voice_method_combo = ttk.Combobox(
+    mainframe,
+    textvariable=chosen_method,
+    values=["gtts", "elevenlabs", "coqui"],
+)
+voice_method_combo.grid(column=2, row=6, sticky=(W, E))
+
+voice_method_combo.current(0)
+
 
 ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=9, sticky=W)
 
@@ -315,7 +285,7 @@ ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
 ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
 ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky=W)
 ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky=W)
-ttk.Label(mainframe, text="(11/gtts) Voice Method").grid(column=3, row=6, sticky=W)
+ttk.Label(mainframe, text="Voice Method").grid(column=3, row=6, sticky=W)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
