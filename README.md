@@ -4,13 +4,17 @@
 ```
 notes for hack club people
 submitted for fudgefudgefudge with my hour count at 6.2h on project
-spent about another hour with readme etc.
-any other time spent is currently in the beta branch (maybe to be included with flavourtown for extending the functionality of an already exsisting application?)
+spent about another hour with readme etc. (still before deadline)
+any other more time is in the beta branch, but can be easily tested in the beta-polish branch (updated readme!)
+if possible, it would be nice if this time could be comverted into as much fudge as possible, but understandable if not because its past the due date when I did it.
+
+I kept working on it because I unironically use this software.
 
 current features in the beta branch:
 removal of chrono
 restructuring of files
-11labs api integration
+11labs tts api integration
+coqui tts (only in beta, not beta-polish)
 improved gui
 improved prompt
 ```
