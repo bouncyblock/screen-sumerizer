@@ -143,6 +143,9 @@ def main(event=None):
     if not ell_key.get():
         ell_key.set(os.getenv("ell_key"))
         log("Set ElevenLabs key from .env", log_var)
+    if not ell_voice.get():
+        ell_voice.set(os.getenv("ell_voice_id"))
+        log("Set ElevenLabs Voide ID from .env", log_var)
 
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
@@ -188,7 +191,7 @@ def main_worker(userMonitor, userDelay):
             pygame.mixer.music.unload()
         elif chosen_method.get() == "elevenlabs":
             log("Using ElevenLabs for audio...", log_var)
-            audio_file = tts(resultContent, method="elevenlabs")
+            audio_file = tts(resultContent, method="elevenlabs", extra = ell_voice)
             play(audio_file)
         elif chosen_method.get() == "coqui":
             log("Using coqui for audio...", log_var)
@@ -264,6 +267,10 @@ ell_key = StringVar()
 ell_key_entry = ttk.Entry(mainframe, width=30, textvariable=ell_key, show="*")
 ell_key_entry.grid(column=2, row=5, sticky=(W, E))
 
+ell_voice = StringVar()
+ell_voice_entry = ttk.Entry(mainframe, width=30, textvariable=ell_voice)
+ell_voice_entry.grid(column=2, row=6, sticky=(W, E))
+
 
 chosen_method = StringVar()
 
@@ -272,9 +279,9 @@ chosen_method = StringVar()
 voice_method_combo = ttk.Combobox(
     mainframe,
     textvariable=chosen_method,
-    values=["gtts", "elevenlabs", "coqui"],
+    values=["gtts", "elevenlabs"],
 )
-voice_method_combo.grid(column=2, row=6, sticky=(W, E))
+voice_method_combo.grid(column=2, row=7, sticky=(W, E))
 
 voice_method_combo.current(0)
 
@@ -288,7 +295,8 @@ ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
 ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
 ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky=W)
 ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky=W)
-ttk.Label(mainframe, text="Voice Method").grid(column=3, row=6, sticky=W)
+ttk.Label(mainframe, text="11 Voice ID").grid(column=3, row=6, sticky=W)
+ttk.Label(mainframe, text="Voice Method").grid(column=3, row=7, sticky=W)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
