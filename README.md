@@ -1,4 +1,4 @@
-# screen summarizer BETA
+# screen summarizer BETA-POLISH (a branch that will be merged soon!)
 ## What if you could have the AI stream checker that DougDoug used in one of his [recent popular clips?](https://www.youtube.com/shorts/EYF_fvP8o8M)? 
 ![hackatime badge](https://hackatime-badge.hackclub.com/U09GRHV7Y80/screen-sumerizer)
 
@@ -9,25 +9,32 @@ This app basically works by looking at one of your monitors (or a virtual monito
 ***PLEASE NOTE THAT MOST OF THE CODE IS WRITTEN FOR THE AI.HACKCLUB.COM API KEY PROVIDER. IT HAS NOT BEEN TESTED WITH OTHER TYPES OF API KEYS***
 ## How can I set it up?
 
-***hey so the releases do not have a beta release conpiled. the only option is running from source!***
+***hey so the releases do not have a release conpiled. the only option is running from source!***
 
 ### if you're running from source... 
 
-1. make sure you have python 3.11 installed
+1. make sure you have python 3.11(.14) installed
 2. clone the project
 3. install the dependencies (pip install -r requirements.txt)
 4. run main.py (python3 main.py)
+5. (optional) if you don't want to have to add your API keys every time make a .env file and it will auto fill API keys and Voice ID.
+
+.env format:
+```
+api_key="your HCAI API key here"
+ell_key="your 11 Labs API key here"
+ell_voice_id="your 11 Labs Voice ID here"
+```
 
 
-minimal layout required:
+minimal layout recommended:
 ```
 screen-sumerizer
-|- screenshots/    # should auto generate now....
-|- voices/         # won't auto generate but not needed for anything but Coqui-TTS
-|- main.py
-|- character.py    # depricated functions, yet to be removed from main....
-|- utils.py
-|- .env
+|- screenshots/    // should auto generate now....
+|- main.py         // run this one!
+|- utils.py        // some helper functions
+|- textToSpeach.py // all(most all) the tts code
+|- .env            // auto fill your data!
 
 ```
 
@@ -53,43 +60,48 @@ python -m nuitka main.py `
     --include-package=<copy and paste this line for everything in the requirements.txt> `
     --noinclude-data-file=*.env
 ```
+
+// note, a new version compiled with py2exe will be released soon!
+
 ## how do I use this?
 
 ### GUI:
 
-// add image here
-
-alright, here we go.
-
-the top text is a debug log, but its only one line. Just because nothing changes immediately after pressing begin capture loop does not mean its broken. it depends on your set delay.
+![alt text](assets/image-2.png)
 
 
-first input line is which display do you want to be capturing. you can find number identifications in any display settings you bios has. THIS NUMBER IS 1 INDEXED. IF YOU PUT 0 IN, YOU DONT HAVE 0 MONITORS (or if you do then I don't know why you're using this program)
+top text is a debug log, you can probably ignore that
 
 
-second input line is delay between screenshots. this number will be ADDED onto however much time it takes to finish the tts
+first number is which display the program will take a screenshot of.
 
 
-the api key. the program will auto input the api key if you have a .env and you press start capture link otherwise you need a:
+second number is how long to wait between screenshots PLUS time to generate AI response and TTS (so about ~20 more seconds)
+
+
+the api key. the program will auto input the api key once you press begin capture loop **IF** you have a .env, otherwise you need a:
 - Hack Club API key
-- 11Labs API key      // hey so if you're using this, the voice selector hasen't been added as a prompt... ctrl-f the code for 042 and change that voice ID to the one you want!
+- 11Labs API key
 
-and even with a correct api key, it can still fail.
+and even with a correct api key, it can still fail.   // let me know if it does!
 some formatting notes:
 - don't have api_key= or anything like that
 - don't have quotes around the api key
 - only have the api key
 
 
+if you're using 11 Labs, you can copy the voice ID from "My Voices" and use it with your text generation. Put that in 11 Voice ID. (this will also auto-fill from .env if applicable)
+
+
 for Voice Method, you have a couple of options. 
-gTTS is free, but uses the google translator voice and cannot be changed
-11Labs can use 20k credits per month, then it won't work without a subscription (this voice is the best)
-Coqui-TTS will use the voice YOU PUT in voices/ and is free because it runs on your hardware. if you have an NVIDIA GPU then you'll have short generation times, but anything else its like 2m for a normal response.
-
-i personally like 11labs the best because Coqui sounds buggy imo but its expensive :C
+- gTTS is free, but uses the google translator voice and cannot be changed
+- 11Labs can use 20k credits per month, then it won't work without a subscription (this voice is the best)
 
 
-the button "Clear Screenshots" does what it says. the screenshots the program gets are saved in screenshots/ and aren't deleted so this will do that.
+i personally like 11labs the best because gtts sounds robotic imo but its expensive :C
+
+
+the button "Clear Screenshots" does what it says. the screenshots the program gets are saved in ./screenshots and aren't deleted so this will remove them.
 
 
 the button "start capture loop" starts the program! only press it when you're ready, the error handling is questionable at best on the compiled version. if it broke because you pressed the button too many times, maybe a quick restart wouldn't hurt you.
@@ -99,20 +111,20 @@ the button "start capture loop" starts the program! only press it when you're re
 (if you compiled from source run main.py)
 
 ### CLI:
-the CLI is no longer supported, sorry. you can still find it in the files (testing/main-cli.py) but it lacks proper dirrectory control, TTS other than gTTS, and a lot more. 
+the CLI is no longer supported, sorry. you can still find it in the files if you go to an earlier version or the beta branch (testing/main-cli.py) but it lacks proper dirrectory control, TTS other than gTTS, and a lot more. 
 
-to use it, make sure you have a screenshots folder in the same dir and a .env with the following format:
+to use it, make sure you have a screenshots folder in the same dir and a .env
 
 
 
 ## expected output
 some ai yelling at you in the <chosen voice method> voice every _delay_ seconds!
 
-## faq
+## does it not work?
 
 Q: 
 
-![alt text](image-2.png)
+![alt text](assets/image.png)
 
 A:
 
@@ -120,19 +132,22 @@ your api key is invalid!
 
 Q:
 
-![alt text](image-3.png)
+![alt text](assets/image-1.png)
 
 A:
 
 your monitor is out of range!
 
-Q: File screenshot not found
+Q: File screenshot not found      // should be impossible to get as an error, lmk if you get this one
 
 A: you don't have a screenshots folder in the project dir!
 
 Q: why is summarizer misspelt everywhere 
 
-it was late ok
+it was late when I was first working on it ok
+
+
+anything else, just let me know or make a issue!
 
 
 ## secret bonus recommendation
@@ -149,21 +164,22 @@ another thing, if you aren't happy with the default personality, change "prompt"
 ## planned features
 - conversation rather than redefining the entire ai every time
 - cross platform compatability (don't have a mac so idk about this one...)
-- better UI and UX
-    - right now you HAVE to set up Coqui no matter what
-    - same for 11Labs
-    - the ui is outdated and should have defaults in case of missing one
-    - error handling
+- bring back coqui
+- dont force 11labs installation
+- use ttkbootstrap for nice gui
+- error handling
+- better install process
+- web version? (very unlikely)
 
 ## ai use disclaimer
-i did use some code generation and some copying from stack overflow for the example flies (not used for the main program, just me testing) and some bugfixing (look coqui has some stupid dependancies). there is probably a small ai code in the main.py from "inline suggestions".
+i did use some code generation and some copying from stack overflow for learning the libraries (see the testing folder in the beta branch) and some bugfixing (look coqui has some stupid dependancies). there is probably a small ai code in the main.py from "inline suggestions".
 
 
-i did not use ai for the readme or commits.
+i did not use ai for the readme or commits because im not a shitter.
 
 
 oh and...
-you use ai to generate the answers to whats on your screen. this means you are FEEDING AI a picture of your screen.
+you will be using ai to generate the answers to whats on your screen. this means you are FEEDING AI a picture of your screen, so ***please do not have personal information on screen***.
 
 ## and with that, i'm off.
 did the main work all in one night with no sleep from midnight to 8am, with some changes at 1pm. i've never felt so burnt out. on the bright side, i have this great screenshot (it was paused for one hour at one point):
@@ -171,10 +187,11 @@ did the main work all in one night with no sleep from midnight to 8am, with some
 
 the rest of the work was done in the following week and added
 - 11labs
-- Coqui
+- Coqui (only in beta)
 - a funny prompt
 - file reorg
 - requirements.txt
+- ok gui
 
 and i removed chrono because it didn't work and i hate pyqqt or whatever its called.
 
