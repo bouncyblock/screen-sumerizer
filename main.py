@@ -38,6 +38,9 @@ Now that you know how to respond, what is a summary of what's happening in this 
 """
 
 SAVE_DIR = r"screenshots"
+if not os.path.exists(SAVE_DIR): # this fixes error if screenshots dir doesn't exist
+    os.makedirs(SAVE_DIR)
+
 
 def log(message):
     print(message)
