@@ -1,7 +1,23 @@
 # screen summarizer
 ## What if you could have the AI stream checker that DougDoug used in one of his [recent popular clips?](https://www.youtube.com/shorts/EYF_fvP8o8M)? 
 ![hackatime badge](https://hackatime-badge.hackclub.com/U09GRHV7Y80/screen-sumerizer)
+```
+notes for hack club people
+submitted for fudgefudgefudge with my hour count at 6.2h on project
+spent about another hour with readme etc. (still before deadline)
+any other more time is in the beta branch, but can be easily tested in the beta-polish branch (updated readme!)
+if possible, it would be nice if this time could be comverted into as much fudge as possible, but understandable if not because its past the due date when I did it.
 
+I kept working on it because I unironically use this software.
+
+current features in the beta branch:
+removal of chrono
+restructuring of files
+11labs tts api integration
+coqui tts (only in beta, not beta-polish)
+improved gui
+improved prompt
+```
 Well, APPARENTLY YOU ALREADY COULD because halfway through this project I realized that his [github account](https://github.com/DougDougGithub/Babagaboosh/tree/main) is public. BUT I FINISHED MY VERSION ANYWAYS.
 
 This app basically works by looking at one of your monitors (or a virtual monitor using [this repo](https://github.com/VirtualDrivers/Virtual-Display-Driver), which is what I recommend if you don't what summaries of your own screen), sending it to gemini-2.5-flash, sending that output to gTTS (google TTS, aka the Google Translate TTS), then playing it using pygame.
@@ -90,11 +106,16 @@ python -m nuitka main.py `
 
 ### GUI:
 ![picture of application](image-1.png)
+
 alright, here we go.
 the top text is a debug log, but its only one line. Just because nothing changes immediately after pressing begin capture loop does not mean its broken. it depends on your delay
+
 first input line is which display do you want to be capturing. you can find number identifications in any display settings you bios has. THIS NUMBER IS 1 INDEXED. IF YOU PUT 0 IN, YOU DONT HAVE 0 MONITORS (or if you do then I don't know why you're using this program)
+
 second input line is delay between screenshots. this number will be ADDED onto however much time it takes to finish the tts
+
 the button starts the program! only press it when you're ready, the error handling is questionable at best on the compiled version. if it broke because you pressed the button too many times, maybe a quick restart wouldn't hurt you.
+
 finally, the api key. the program will silently fail without the api key, and even with a correct api key, it can still fail.
 some formatting notes:
 - don't have api_key= or anything like that
@@ -115,17 +136,29 @@ some ai yelling at you in the google translator voice every _delay_ seconds!
 ## faq
 
 Q: 
+
 ![alt text](image-2.png)
+
 A:
+
 your api key is invalid!
+
 Q:
+
 ![alt text](image-3.png)
+
 A:
+
 your monitor is out of range!
+
 Q: File screenshot not found
+
 A: you don't have a screenshots folder in the project dir!
+
 Q: why is summarizer misspelt everywhere 
+
 it was late ok
+
 
 ## secret bonus recommendation
 
@@ -148,7 +181,7 @@ another thing, if you aren't happy with the default personality, change "prompt"
 - maybe obs support?
 
 ## ai use disclaimer
-i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably ai code in the main.py file because if I can reuse a block of code i will.
+i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably a small ai code in the main.py.
 i did not use ai for the readme or commits.
 
 oh and you use ai to generate the answers to whats on your screen
