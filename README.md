@@ -9,6 +9,7 @@ any other more time is in the beta branch, but can be easily tested in the beta-
 if possible, it would be nice if this time could be comverted into as much fudge as possible, but understandable if not because its past the due date when I did it.
 
 I kept working on it because I unironically use this software.
+i also updated the readme + requirements.txt in the main branch for ease of install.
 
 current features in the beta branch:
 removal of chrono
@@ -25,50 +26,32 @@ This app basically works by looking at one of your monitors (or a virtual monito
 ***PLEASE NOTE THAT MOST OF THE CODE IS WRITTEN FOR THE AI.HACKCLUB.COM API KEY PROVIDER. IT HAS NOT BEEN TESTED WITH OTHER TYPES OF API KEYS***
 ## How can I set it up?
 
-### if you're normal...
-extract the zip file from the releases tab
-make a screenshots folder in the extracted folder (if its not already there)
-run main.exe
+### release tab
 
-### if you're compiling from source... THIS IS THE GUIDE YOU SHOULD FOLLOW IF THERE IS NOT A COMPILED BINARY FOR YOUR OS
+you can try downloading the .exe from the release tab, but it might be slightly out of date.
+
+### if you're running from python...
 
 1. make sure you have python 3.11 installed
-2. clone the project (git clone https://github.com/bouncyblock/screen-sumerizer.git)
-3. install the dependencies (pip install gtts pyqt5 pygame requests keyboard mss)
-4. run main.py (python3 main.py)
+2. clone the project (`git clone https://github.com/bouncyblock/screen-sumerizer.git`)
+3. move into the folder (`cd screen-sumerizer`)
+4. install the dependencies (`pip install -r requirements.txt`)
+5. run main.py (`python3 main.py`)
+
+
 If for some reason if fails with not finding screenshots, make a folder called screenshots in the same folder as your main.py. If you already did that, then try running this command while in the project dir
 ```
 python3 main.py
 ```
- otherwise it can mess up the paths in the code.       // will be fixed for next version
+otherwise it can mess up the paths in the code.       // will be fixed for next version
 
-minimal layout required:
+recommended layout required:
 ```
 screen-sumerizer
 |- screenshots/
 |- main.py
 |- chrono_trigger.git
-
 ```
-
-### alt guide for source if you like pain:
-Good news! All you need is Python 3.11, a COUPLE pip dependencies:
-```
-python-dotenv (only for cli ver)
-openrouter    (only for cli ver)
-gTTS
-PyQt5
-pygame
-requests
-keyboard
-mss
-```
-***Also make sure you have a screenshots folder (even if empty), and for your .env file, well...***
-```api_key="my gemini-2.5-flash api key here"```
-(and you only have to a .env file if you want to use the cli version!)
-
-If for some reason you can't run it after that, please let me know (will.kuntze@gmail.com)! Or open an issue if you want?
-
 
 ### secret bonus guide: compile to .exe from source!
 for this, I used nuitka because it was the first one that compiled to a working .exe. basically, once you're finished modifying your code, this is the command I used to compile this.
@@ -110,11 +93,15 @@ python -m nuitka main.py `
 alright, here we go.
 the top text is a debug log, but its only one line. Just because nothing changes immediately after pressing begin capture loop does not mean its broken. it depends on your delay
 
+
 first input line is which display do you want to be capturing. you can find number identifications in any display settings you bios has. THIS NUMBER IS 1 INDEXED. IF YOU PUT 0 IN, YOU DONT HAVE 0 MONITORS (or if you do then I don't know why you're using this program)
+
 
 second input line is delay between screenshots. this number will be ADDED onto however much time it takes to finish the tts
 
+
 the button starts the program! only press it when you're ready, the error handling is questionable at best on the compiled version. if it broke because you pressed the button too many times, maybe a quick restart wouldn't hurt you.
+
 
 finally, the api key. the program will silently fail without the api key, and even with a correct api key, it can still fail.
 some formatting notes:
@@ -122,11 +109,8 @@ some formatting notes:
 - don't have quotes around the api key
 - only have the api key
 
-(if you compiled from source run main.py)
 
-### CLI:
-wow! I can't believe you're using source just to use cli! there's only one option for the CLI version though, monitor number, and you'll be prompted for that.
-otherwise just run the python file (main-cli.py). it has SLIGHTLY less features than the GUI version.
+you can get your API key for free at ai.hackclub.com
 
 
 ## expected output
