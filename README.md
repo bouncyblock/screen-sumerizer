@@ -28,7 +28,7 @@ This app basically works by looking at one of your monitors (or a virtual monito
 
 ### release tab
 
-you can try downloading the .exe from the release tab, but it might be slightly out of date.
+you can try downloading the .exe from the release tab, its gurenteed to work, but only compiled for windows. if you download the source code from there, its also probably more stable, although the code in main shouldn't have changed much....
 
 ### if you're running from python...
 
@@ -135,6 +135,15 @@ A:
 
 your monitor is out of range!
 
+Q: 
+
+<img width="1103" height="318" alt="image" src="https://github.com/user-attachments/assets/86b9bb73-02a8-4d78-a717-f176a9673c88" />
+
+A:
+
+Hack Club AI is down :C 
+There's not a whole lot you can do to fix this, and the program won't work until HCAI is back online. sorry!
+
 Q: File screenshot not found
 
 A: you don't have a screenshots folder in the project dir!
@@ -168,7 +177,7 @@ another thing, if you aren't happy with the default personality, change "prompt"
 i did use some code generation and some copying from stack overflow for the example flies and some bugfixing. there is probably a small ai code in the main.py.
 i did not use ai for the readme or commits.
 
-oh and you use ai to generate the answers to whats on your screen
+oh and you will be using ai to generate the answers to whats on your screen
 
 ## and with that, i'm off.
 did this all in one night with no sleep from midnight to 8am, with some changes at 1pm. i've never felt so burnt out. on the bright side, i have this great screenshot (it was paused for one hour at one point):
