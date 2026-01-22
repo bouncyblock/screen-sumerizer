@@ -5,8 +5,7 @@
 notes for hack club people
 submitted for fudgefudgefudge with my hour count at 6.2h on project
 spent about another hour with readme etc. (still before deadline)
-any other more time is in the beta branch, but can be easily tested in the beta-polish branch (updated readme!)
-if possible, it would be nice if this time could be comverted into as much fudge as possible, but understandable if not because its past the due date when I did it.
+any other more time is in the beta branch, but can maYBE be easily tested in the beta-polish branch (updated readme!)
 
 I kept working on it because I unironically use this software.
 i also updated the readme + requirements.txt in the main branch for ease of install.
@@ -18,6 +17,7 @@ restructuring of files
 coqui tts (only in beta, not beta-polish)
 improved gui
 improved prompt
+
 ```
 Well, APPARENTLY YOU ALREADY COULD because halfway through this project I realized that his [github account](https://github.com/DougDougGithub/Babagaboosh/tree/main) is public. BUT I FINISHED MY VERSION ANYWAYS.
 
