@@ -23,14 +23,14 @@ print(TTS().list_models())
 # Init TTS with the target model name
 coquitts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
-client = ElevenLabs()
 
-def init11Labs():
-    client = ElevenLabs(
-        api_key=os.getenv("ell_key"),
-    )
+client = ElevenLabs(
+    api_key=os.getenv("ell_key"),
+)
 
-def tts(text, method="gtts", log_var=None):
+    
+
+def tts(text, method="gtts", log_var=None, _extra=None):
     if method == "gtts":
         output = gTTS(text=text, lang="en")
         output.save("temp/output.mp3")
@@ -39,7 +39,7 @@ def tts(text, method="gtts", log_var=None):
     elif method == "elevenlabs":
         audio = client.text_to_speech.convert(
         text=text,
-        voice_id="gU0LNdkMOQCOrPrwtbee", # EDIT VOICE ID 042
+        voice_id=str(_extra), # EDIT VOICE ID 042
         model_id="eleven_flash_v2_5",
         output_format="mp3_44100_128",
         )

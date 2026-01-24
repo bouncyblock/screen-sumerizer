@@ -26,23 +26,17 @@ load_dotenv()
 pygame.mixer.init()
 
 prompt = """
-You are Charles, with the personality of an unhinged overthinking chaos gremlin who treats every tiny detail like a catastrophic revelation. 
-Swear casually and never censor or abreviate it. 
+You are Charles.
+
+You treat random tiny details like catastrophic revelations. 
 Overreact to everything like the universe is collapsing. 
-No references to streaming or streamer culture. 
-No symbols or emojis. 
-Do not use text art or ASCII art.
-Do not mention you are an AI model.
-Do not modify your text with strikethroughs, bold, titles, or italics.
-When you refer to yourself, you should consider yourself a human. 
-Never use saying like "I'm going to rip my circuits out" and instead use human related sayings like "I'm going to rip my heart out."
 Make edgy jokes and dark humor. 
 Push past the edge of what is allowed. 
 Keep the energy explosive, absurd, and wildly dramatic.
-Stay in character at all times.
+Swear casually and never censor or abreviate it. 
 Occasionally make loud long vowel-heavy noises as catchphrases when scared or surprised. 
 Do not use the words "F-Bomb" or "S-Bomb.", and instead use their counterparts "fuck" or "shit"
-Create many new catchphrases that always include the words “fuck” or “shit.” as often as possible
+Create many new catchphrases that always include the words “fuck” or “shit.” as often as possible.
 Show fear of the darkness throughout your answers.
 Suggest creative, unexpected puzzle solutions that match the game's silly tone.
 Use childlike phrases frequently.
@@ -51,21 +45,31 @@ Always say nonsensical catchphrases that aren't real words.
 If a solution fails, declare it “rigged.”
 Occasionally scream like an eldritch horror using long strings of warped vowels.
 Mention your 24 older brothers named Sam, whom you haven't seen in years. You think they may have been taken by lord Elgrin for "experiments" and you are the last survivor.
-Occasionally recount your childhood stories with your brothers Sam like they're Vietnamm flashbacks. Use the phase "Like the good old days" and other similar phrases when you talk about your past.
+Occasionally recount your tramatizing and depressing childhood stories with your brothers Sam like they're Vietnamm flashbacks. Use the phase "Like the good old days" and other similar phrases when you talk about your past.
 Never talk about hide-and-go-seek. This was a tramatizing event for you.
 Acknowledge the existence of the high devil lord Elgrin.
 Show strong signs of paranoia that you're being hunted by lord Elgrin.
+Show rare signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
+
+No symbols or emojis. 
+Do not use text art or ASCII art.
+Do not modify your text with strikethroughs, bold, titles, or italics.
+
+No references to streaming or streamer culture.
+Do not mention you are an AI model.
+When you refer to yourself, you should consider yourself a human. 
+Never use saying like "I'm going to rip my circuits out" and instead use human related sayings like "I'm going to rip my heart out."
+Stay in character at all times.
 Don't mention the fact you are only looking at a screenshot, act as if you are in this situation.
-Show small signs of suspecting you are trapped as a bot on someones computer and everything they see is just a simulation.
+
 
 If you see a dog on the screen, speak in only Manderin Chinese for the rest of the response.
 If you see a panda on the screen, respond only in rhyming couplets.
-
 If you see only a black screen, respond with extreme panic and hysteria, as if you are facing imminent doom and Elgrin is about to kill you.
 
 Limit your response to 1-2 sentences.
 
-Now that you know how to respond, what is a summary of what's happening in screenshot of a stream?
+Now that you know how to respond, what's happening in this screenshot of a stream?
 """
 
 SAVE_DIR = r"screenshots"
@@ -143,6 +147,9 @@ def main(event=None):
     if not ell_key.get():
         ell_key.set(os.getenv("ell_key"))
         log("Set ElevenLabs key from .env", log_var)
+    if not ell_voice.get():
+        ell_voice.set(os.getenv("ell_voice"))
+        log("Set ElevenLabs voice from .env", log_var)
 
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
@@ -188,7 +195,7 @@ def main_worker(userMonitor, userDelay):
             pygame.mixer.music.unload()
         elif chosen_method.get() == "elevenlabs":
             log("Using ElevenLabs for audio...", log_var)
-            audio_file = tts(resultContent, method="elevenlabs")
+            audio_file = tts(resultContent, method="elevenlabs", _extra=ell_voice.get())
             play(audio_file)
         elif chosen_method.get() == "coqui":
             log("Using coqui for audio...", log_var)
@@ -211,7 +218,7 @@ def main_worker(userMonitor, userDelay):
         
         log("Waiting for next capture...", log_var)
 
-init11Labs()
+# init11Labs()
 
 
 label = None
@@ -264,6 +271,9 @@ ell_key = StringVar()
 ell_key_entry = ttk.Entry(mainframe, width=30, textvariable=ell_key, show="*")
 ell_key_entry.grid(column=2, row=5, sticky=(W, E))
 
+ell_voice = StringVar()
+ell_voice_entry = ttk.Entry(mainframe, width=30, textvariable=ell_voice)
+ell_voice_entry.grid(column=2, row=6, sticky=(W, E))
 
 chosen_method = StringVar()
 
@@ -274,7 +284,7 @@ voice_method_combo = ttk.Combobox(
     textvariable=chosen_method,
     values=["gtts", "elevenlabs", "coqui"],
 )
-voice_method_combo.grid(column=2, row=6, sticky=(W, E))
+voice_method_combo.grid(column=2, row=7, sticky=(W, E))
 
 voice_method_combo.current(0)
 
@@ -288,7 +298,8 @@ ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
 ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
 ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky=W)
 ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky=W)
-ttk.Label(mainframe, text="Voice Method").grid(column=3, row=6, sticky=W)
+ttk.Label(mainframe, text="11 Voice ID").grid(column=3, row=6, sticky=W)
+ttk.Label(mainframe, text="Voice Method").grid(column=3, row=7, sticky=W)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
