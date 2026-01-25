@@ -11,10 +11,10 @@
 #
 
 from dotenv import load_dotenv
-from tkinter import *
+from tkinter import Tk, StringVar
 from tkinter import ttk
-from utils import *
-from textToSpeach import *
+from utils import capture, encode_image, log, clear_screenshots
+from textToSpeach import tts, play
 import pygame
 import requests
 import os
@@ -142,14 +142,26 @@ def main(event=None):
         return
 
     if not api_key.get():
-        api_key.set(os.getenv("api_key"))
-        log("Set API key from .env", log_var)
+        env_key = os.getenv("api_key")
+        if env_key:
+            api_key.set(env_key)
+            log("Set API key from .env", log_var)
+        else:
+            log("No AI API key provided!", log_var)
     if not ell_key.get():
-        ell_key.set(os.getenv("ell_key"))
-        log("Set ElevenLabs key from .env", log_var)
+        ell_key_value = os.getenv("ell_key")
+        if ell_key_value:
+            ell_key.set(ell_key_value)
+            log("Set ElevenLabs key from .env", log_var)
+        else:
+            log("No ElevenLabs API key provided!", log_var)
     if not ell_voice.get():
-        ell_voice.set(os.getenv("ell_voice"))
-        log("Set ElevenLabs voice from .env", log_var)
+        ell_voice_value = os.getenv("ell_voice")
+        if ell_voice_value:
+            ell_voice.set(ell_voice_value)
+            log("Set ElevenLabs voice from .env", log_var)
+        else:
+            log("No ElevenLabs voice provided!", log_var)
 
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
@@ -167,49 +179,67 @@ def main_worker(userMonitor, userDelay):
         log("Processing image: " + image_name, log_var) 
         image_data = encode_image(image_name) # encode the image for b64
         
+        resultContent = None
+        
         response = aiResponse(image_data) # input the image to the AI
-        result = response.json() # defines as json?
-
-        print(result) # debug woo
-
-        resultContent = result["choices"][0]["message"]["content"]
-
-        log(f"Status Code: {response.status_code}", log_var)
-        log(resultContent, log_var)
+        if response:
+            result = response.json() # defines as json?
+            resultContent = result["choices"][0]["message"]["content"]
+        else:
+            log("No response from AI", log_var)
+        
+        if response:
+            log(f"Status Code: {response.status_code}", log_var)
+        else:
+            log("No response from AI", log_var)
+        #log(resultContent, log_var)
 
         #pygame.mixer.music.stop()
         
         
         #slide_in("chrono_trigger.gif")
-        
-        if chosen_method.get() == "gtts":
-            log("Using gTTS for audio...", log_var)
-            audio_file = tts(resultContent, method="gtts")
-            pygame.mixer.music.load(audio_file)
-            pygame.mixer.music.play()
-            
-            while pygame.mixer.music.get_busy():
-                pygame.time.wait(100)
-                root.update()  # keep Tkinter responsive while music plays
-            
-            pygame.mixer.music.unload()
-        elif chosen_method.get() == "elevenlabs":
-            log("Using ElevenLabs for audio...", log_var)
-            audio_file = tts(resultContent, method="elevenlabs", _extra=ell_voice.get())
-            play(audio_file)
-        elif chosen_method.get() == "coqui":
-            log("Using coqui for audio...", log_var)
+        if resultContent:
+            if chosen_method.get() == "gtts":
+                log("Using gTTS for audio...", log_var)
+                
+                audio_file = tts(resultContent, method="gtts")
+                
+                if audio_file and isinstance(audio_file, str):
+                    pygame.mixer.music.load(audio_file)
+                    pygame.mixer.music.play()
+                    
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.wait(100)
+                        root.update()  # keep Tkinter responsive while music plays
+                    
+                    pygame.mixer.music.unload()
+                else:
+                    log("Error generating gTTS audio", log_var)
+            elif chosen_method.get() == "elevenlabs":
+                log("Using ElevenLabs for audio...", log_var)
+                audio_file = tts(resultContent, method="elevenlabs", _extra=ell_voice.get())
+                
+                if audio_file and isinstance(audio_file, str):
+                    with open(audio_file, "rb") as f:
+                        audio_bytes = f.read()
+                    play(audio_bytes)
+                else:
+                    log("Error generating ElevenLabs audio", log_var)
+            elif chosen_method.get() == "coqui":
+                log("Using coqui for audio...", log_var)
 
-            tts(resultContent, method="coqui") # doesnt return audio file like others...
+                tts(resultContent, method="coqui") # doesnt return audio file like others...
 
-            pygame.mixer.music.load("temp/output.wav")
-            pygame.mixer.music.play()
-            
-            while pygame.mixer.music.get_busy():
-                pygame.time.wait(100)
-                root.update()  # keep Tkinter responsive while music plays
+                pygame.mixer.music.load("temp/output.wav")
+                pygame.mixer.music.play()
+                
+                while pygame.mixer.music.get_busy():
+                    pygame.time.wait(100)
+                    root.update()  # keep Tkinter responsive while music plays
 
-            pygame.mixer.music.unload()
+                pygame.mixer.music.unload()
+        else:
+            log("No content from AI response", log_var)
 
             
 
@@ -231,10 +261,10 @@ root.title("screen summarizer")
 
 
 mainframe = ttk.Frame(root, padding=(3, 3, 12, 12))
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+mainframe.grid(column=0, row=0, sticky="NWES")
 
 log_var = StringVar(value="Ready...")
-ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky=(W, E))
+ttk.Label(mainframe, textvariable=log_var).grid(column=1, row=0, columnspan=3, sticky="W, E")
 
 
 # monitor
@@ -246,7 +276,7 @@ monitor_entry = ttk.Spinbox(
     width=7,
     textvariable=monitor
 )
-monitor_entry.grid(column=2, row=1, sticky=(W, E))
+monitor_entry.grid(column=2, row=1, sticky="W, E")
 monitor_entry.set(1)
 
 # Delay 
@@ -258,22 +288,21 @@ delay_entry = ttk.Spinbox(
     width=7,
     textvariable=delay
 )
-delay_entry.grid(column=2, row=3, sticky=(W, E))
+delay_entry.grid(column=2, row=3, sticky="W, E")
 delay_entry.set(0)
 
 
 
 api_key = StringVar()
 api_key_entry = ttk.Entry(mainframe, width=30, textvariable=api_key, show="*")
-api_key_entry.grid(column=2, row=4, sticky=(W, E))
+api_key_entry.grid(column=2, row=4, sticky="W, E")
 
 ell_key = StringVar()
 ell_key_entry = ttk.Entry(mainframe, width=30, textvariable=ell_key, show="*")
-ell_key_entry.grid(column=2, row=5, sticky=(W, E))
-
+ell_key_entry.grid(column=2, row=5, sticky="W, E")
 ell_voice = StringVar()
 ell_voice_entry = ttk.Entry(mainframe, width=30, textvariable=ell_voice)
-ell_voice_entry.grid(column=2, row=6, sticky=(W, E))
+ell_voice_entry.grid(column=2, row=6, sticky="W, E")
 
 chosen_method = StringVar()
 
@@ -284,28 +313,28 @@ voice_method_combo = ttk.Combobox(
     textvariable=chosen_method,
     values=["gtts", "elevenlabs", "coqui"],
 )
-voice_method_combo.grid(column=2, row=7, sticky=(W, E))
+voice_method_combo.grid(column=2, row=7, sticky="W, E")
 
 voice_method_combo.current(0)
 
 
-ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=9, sticky=W)
+ttk.Button(mainframe, text="Begin capture loop!", command=main).grid(column=3, row=9, sticky="W")
 
-ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=2, row=9, sticky=W)
+ttk.Button(mainframe, text="Clear Screenshots!", command=clear_screenshots).grid(column=2, row=9, sticky="W")
 
 
-ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky=W)
-ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky=W)
-ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky=W)
-ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky=W)
-ttk.Label(mainframe, text="11 Voice ID").grid(column=3, row=6, sticky=W)
-ttk.Label(mainframe, text="Voice Method").grid(column=3, row=7, sticky=W)
+ttk.Label(mainframe, text="which monitor?").grid(column=3, row=1, sticky="W")
+ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky="W")
+ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky="W")
+ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky="W")
+ttk.Label(mainframe, text="11 Voice ID").grid(column=3, row=6, sticky="W")
+ttk.Label(mainframe, text="Voice Method").grid(column=3, row=7, sticky="W")
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 mainframe.columnconfigure(2, weight=1)
 for child in mainframe.winfo_children(): 
-    child.grid_configure(padx=5, pady=5)
+    child.grid_configure(padx=5, pady=5) # type: ignore    FUCK OFF WARNINGS
 
 monitor_entry.focus()
 root.bind("<Return>", main)
