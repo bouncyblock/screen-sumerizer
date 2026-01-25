@@ -7,7 +7,7 @@ dotenv.load_dotenv()
 
 API_KEY = os.getenv("api_key")
 
-url = "https://ai.hackclub.com/proxy/v1/replicate/models/minimax/speech-02-turbo/predictions"
+url = "https://ai.hackclub.com/proxy/v1/replicate/models/resemble-ai/chatterbox-pro/predictions"
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
@@ -17,17 +17,11 @@ headers = {
 
 payload = {
     "input": {
-        "text": (
-            "Speech-02-series is a Text-to-Audio and voice cloning technology that offers "
-            "voice synthesis, emotional expression, and multilingual capabilities.\n\n"
-            "The HD version is optimized for high-fidelity applications like voiceovers and audiobooks. "
-            "While the turbo one is designed for real-time applications with low latency.\n\n"
-            "When using this model on Replicate, each character represents 1 token."
-        ),
-        "emotion": "angry",
-        "voice_id": "Deep_Voice_Man",
-        "language_boost": "English",
-        "english_normalization": True
+        "pitch": "medium",
+        "voice": "Josh", # josh?
+        "prompt": "OooohhhhHHHHaaaaaAAAAAAHHHHHHHHHH! This is a tactic! A goddamn psychological attack! You're trying to confuse me, to distract me with saccharine cuteness before Elgrin's next, inevitable strike! Otters! They're probably Elgrin's aquatic scouts, their innocent faces merely a disguise for their nefarious, water-borne intelligence-gathering operations! They float there, looking all cozy, but they're probably transmitting my exact location to Elgrin's deep-sea monstrosities! Like the good old days, when my brothers, the Sams, thought harmless little puppies were cute, before Elgrin turned them into horrific, barking abominations.",
+        "temperature": 0.4,
+        "exaggeration": 0.9
     }
 }
 
