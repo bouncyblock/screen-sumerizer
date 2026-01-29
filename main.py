@@ -13,8 +13,8 @@
 from dotenv import load_dotenv
 from tkinter import Tk, StringVar
 from tkinter import ttk
-from utils import capture, encode_image, log, clear_screenshots
-from textToSpeach import tts, play
+from utils import capture, encode_image, log, clear_screenshots, validate_inputs
+from textToSpeach import ttsPlay
 import pygame
 import requests
 import os
@@ -141,27 +141,12 @@ def main(event=None):
         log("Error: Please select a TTS method", log_var)
         return
 
-    if not api_key.get():
-        env_key = os.getenv("api_key")
-        if env_key:
-            api_key.set(env_key)
-            log("Set API key from .env", log_var)
-        else:
-            log("No AI API key provided!", log_var)
-    if not ell_key.get():
-        ell_key_value = os.getenv("ell_key")
-        if ell_key_value:
-            ell_key.set(ell_key_value)
-            log("Set ElevenLabs key from .env", log_var)
-        else:
-            log("No ElevenLabs API key provided!", log_var)
-    if not ell_voice.get():
-        ell_voice_value = os.getenv("ell_voice")
-        if ell_voice_value:
-            ell_voice.set(ell_voice_value)
-            log("Set ElevenLabs voice from .env", log_var)
-        else:
-            log("No ElevenLabs voice provided!", log_var)
+    if not validate_inputs(api_key, "api_key", log_var):
+        return
+    if not validate_inputs(ell_key, "ell_key", log_var):
+        return
+    if not validate_inputs(ell_voice, "ell_voice", log_var):
+        return
 
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
@@ -199,45 +184,7 @@ def main_worker(userMonitor, userDelay):
         
         #slide_in("chrono_trigger.gif")
         if resultContent:
-            if chosen_method.get() == "gtts":
-                log("Using gTTS for audio...", log_var)
-                
-                audio_file = tts(resultContent, method="gtts")
-                
-                if audio_file and isinstance(audio_file, str):
-                    pygame.mixer.music.load(audio_file)
-                    pygame.mixer.music.play()
-                    
-                    while pygame.mixer.music.get_busy():
-                        pygame.time.wait(100)
-                        root.update()  # keep Tkinter responsive while music plays
-                    
-                    pygame.mixer.music.unload()
-                else:
-                    log("Error generating gTTS audio", log_var)
-            elif chosen_method.get() == "elevenlabs":
-                log("Using ElevenLabs for audio...", log_var)
-                audio_file = tts(resultContent, method="elevenlabs", _extra=ell_voice.get())
-                
-                if audio_file and isinstance(audio_file, str):
-                    with open(audio_file, "rb") as f:
-                        audio_bytes = f.read()
-                    play(audio_bytes)
-                else:
-                    log("Error generating ElevenLabs audio", log_var)
-            elif chosen_method.get() == "coqui":
-                log("Using coqui for audio...", log_var)
-
-                tts(resultContent, method="coqui") # doesnt return audio file like others...
-
-                pygame.mixer.music.load("temp/output.wav")
-                pygame.mixer.music.play()
-                
-                while pygame.mixer.music.get_busy():
-                    pygame.time.wait(100)
-                    root.update()  # keep Tkinter responsive while music plays
-
-                pygame.mixer.music.unload()
+            ttsPlay(resultContent, chosen_method.get(), log_var, extra=ell_voice.get())
         else:
             log("No content from AI response", log_var)
 

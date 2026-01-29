@@ -28,3 +28,14 @@ def clear_screenshots(SAVE_DIR="screenshots"):
                 os.unlink(file_path)
         except Exception as e:
             log(f"Error deleting file {file_path}: {e}")
+
+def validate_inputs(key, key_name, log_var):
+    if not key.get():
+        temp_key = os.getenv(key_name)
+        if temp_key:
+            key.set(temp_key)
+            log(f"Set {key_name} from .env", log_var)
+        else:
+            log(f"No {key_name} provided!", log_var)
+            return False
+    return True

@@ -1,3 +1,0 @@
-- [] json loading 
-- [] improved UX
-- [] don't force 11labs
