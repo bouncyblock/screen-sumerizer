@@ -258,7 +258,7 @@ chosen_method = StringVar()
 voice_method_combo = ttk.Combobox(
     mainframe,
     textvariable=chosen_method,
-    values=["gtts", "elevenlabs", "coqui"],
+    values=["gtts", "elevenlabs"],#, "coqui"],
 )
 voice_method_combo.grid(column=2, row=7, sticky="W, E")
 

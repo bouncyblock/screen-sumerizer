@@ -1,28 +1,28 @@
 import pygame
 from utils import *
 from gtts import gTTS
-import torch
+#import torch
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
 
-from TTS.tts.configs.xtts_config import XttsConfig
-from TTS.tts.models.xtts import XttsAudioConfig
-from TTS.config.shared_configs import BaseDatasetConfig
-from TTS.tts.models.xtts import XttsArgs
+#from TTS.tts.configs.xtts_config import XttsConfig
+#from TTS.tts.models.xtts import XttsAudioConfig
+#from TTS.config.shared_configs import BaseDatasetConfig
+#from TTS.tts.models.xtts import XttsArgs
 
-torch.serialization.add_safe_globals([
-    XttsConfig,
-    XttsAudioConfig,
-    BaseDatasetConfig,
-    XttsArgs,
-])
+#torch.serialization.add_safe_globals([
+#    XttsConfig,
+#    XttsAudioConfig,
+#    BaseDatasetConfig,
+#    XttsArgs,
+#])
 
-from TTS.api import TTS
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(TTS().list_models())
+#from TTS.api import TTS
+#device = "cuda" if torch.cuda.is_available() else "cpu"
+#print(TTS().list_models())
 
 # Init TTS with the target model name
-coquitts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+#coquitts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
 
 client = ElevenLabs(
@@ -51,21 +51,21 @@ def ttsGenerate(text, method="gtts", log_var=None, _extra=None):
             log("Saved temp/output.mp3", log_var)
             return "temp/output.mp3"
         
-        case "coqui":
-            coquitts.tts_to_file(
-                    text=text,
-                    speaker_wav="./voices/fry.wav",
-                    language="en",
-                    file_path="temp/output.wav",
-                    split_sentences=True,
-                    # 🔥 More expression
-                    temperature=1.0,      # 0.7–1.1: higher = more emotional/chaotic
-                    top_p=0.95,           # higher = more variety
-                    length_penalty=0.8,   # <1 = a bit more drawn-out / dramatic
-                    # ⚡ Faster render
-                    speed=1.5#,           # >1 = faster speaking rate
-                    #sample_rate=16000     # lower = faster generation, smaller file
-                )
+        #case "coqui":
+            #coquitts.tts_to_file(
+            #        text=text,
+            #        speaker_wav="./voices/fry.wav",
+            #        language="en",
+            #        file_path="temp/output.wav",
+            #        split_sentences=True,
+            #        # 🔥 More expression
+            #        temperature=1.0,      # 0.7–1.1: higher = more emotional/chaotic
+            #        top_p=0.95,           # higher = more variety
+            #        length_penalty=0.8,   # <1 = a bit more drawn-out / dramatic
+            #        # ⚡ Faster render
+            #        speed=1.5#,           # >1 = faster speaking rate
+            #        #sample_rate=16000     # lower = faster generation, smaller file
+            #    )
         case _:
             log("Error: Unknown TTS method", log_var)
             return None
