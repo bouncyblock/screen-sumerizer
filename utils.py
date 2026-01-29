@@ -29,7 +29,7 @@ def clear_screenshots(SAVE_DIR="screenshots"):
         except Exception as e:
             log(f"Error deleting file {file_path}: {e}")
 
-def validate_inputs(key, key_name, log_var):
+def validate_keys(key, key_name, log_var):
     if not key.get():
         temp_key = os.getenv(key_name)
         if temp_key:
@@ -39,3 +39,15 @@ def validate_inputs(key, key_name, log_var):
             log(f"No {key_name} provided!", log_var)
             return False
     return True
+
+def validate_inputs(input_var, name, log_var):
+    try:
+        temp_var = input_var.get().strip()
+        if not temp_var:
+            log(f"Error: Please enter a valid {name}, default to 1", log_var)
+            return 1
+        #code_var = int(temp_var)
+        return int(temp_var)
+    except ValueError:
+        log(f"Error: {name} must be a number, default to 1", log_var)
+        return 1

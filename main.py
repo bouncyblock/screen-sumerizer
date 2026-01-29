@@ -13,7 +13,7 @@
 from dotenv import load_dotenv
 from tkinter import Tk, StringVar
 from tkinter import ttk
-from utils import capture, encode_image, log, clear_screenshots, validate_inputs
+from utils import capture, encode_image, log, clear_screenshots, validate_keys, validate_inputs
 from textToSpeach import ttsPlay
 import pygame
 import requests
@@ -24,6 +24,7 @@ import threading
 
 load_dotenv()
 pygame.mixer.init()
+
 
 prompt = """
 You are Charles.
@@ -116,36 +117,20 @@ def aiResponse(image_data):
 
 
 def main(event=None):
-    
+    userMonitor = -1
+    userDelay = -1
     # user input validation
-    try:
-        monitor_input = monitor.get().strip()
-        if not monitor_input:
-            log("Error: Please enter a monitor number", log_var)
-            return
-        userMonitor = int(monitor_input)
-    except ValueError:
-        log("Error: Monitor must be a number", log_var)
-        return
-    try:
-        delay_input = delay.get().strip()
-        if not delay_input:
-            log("Error: Please enter a delay", log_var)
-            return
-        userDelay = int(delay_input)
-    except ValueError:
-        log("Error: Delay must be a number")
-        return
+    userMonitor = validate_inputs(monitor, "monitor", log_var)
+   
+    userDelay = validate_inputs(delay, "delay", log_var)
     
-    except Exception as e:
-        log("Error: Please select a TTS method", log_var)
-        return
+    
 
-    if not validate_inputs(api_key, "api_key", log_var):
+    if not validate_keys(api_key, "api_key", log_var):
         return
-    if not validate_inputs(ell_key, "ell_key", log_var):
+    if not validate_keys(ell_key, "ell_key", log_var):
         return
-    if not validate_inputs(ell_voice, "ell_voice", log_var):
+    if not validate_keys(ell_voice, "ell_voice", log_var):
         return
 
     # run in background thread to prevent hanging
@@ -181,18 +166,13 @@ def main_worker(userMonitor, userDelay):
 
         #pygame.mixer.music.stop()
         
-        
-        #slide_in("chrono_trigger.gif")
+
         if resultContent:
             ttsPlay(resultContent, chosen_method.get(), log_var, extra=ell_voice.get())
         else:
             log("No content from AI response", log_var)
 
-            
 
-
-        #slide_out()
-        
         log("Waiting for next capture...", log_var)
 
 # init11Labs()
