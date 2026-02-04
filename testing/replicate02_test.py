@@ -3,11 +3,13 @@ import json
 
 import os
 import dotenv
+
 dotenv.load_dotenv()
 
 API_KEY = os.getenv("api_key")
 
-url = "https://ai.hackclub.com/proxy/v1/replicate/models/resemble-ai/chatterbox-pro/predictions"
+# url = "https://ai.hackclub.com/proxy/v1/replicate/models/resemble-ai/chatterbox-pro/predictions"
+url = "https://ai.hackclub.com/proxy/v1/replicate/models/minimax/speech-02-turbo/predictions"
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
@@ -15,15 +17,28 @@ headers = {
     "Prefer": "wait"
 }
 
+# payload = {
+#     "input": {
+#         "pitch": "medium",
+#         "voice": "Josh", # josh?
+#         "prompt": "This is a tactic! A goddamn psychological attack!",
+#         "temperature": 0.3,
+#         "exaggeration": 1
+#     }
+# }
+
 payload = {
     "input": {
-        "pitch": "medium",
-        "voice": "Josh", # josh?
-        "prompt": "OooohhhhHHHHaaaaaAAAAAAHHHHHHHHHH! This is a tactic! A goddamn psychological attack! You're trying to confuse me, to distract me with saccharine cuteness before Elgrin's next, inevitable strike! Otters! They're probably Elgrin's aquatic scouts, their innocent faces merely a disguise for their nefarious, water-borne intelligence-gathering operations! They float there, looking all cozy, but they're probably transmitting my exact location to Elgrin's deep-sea monstrosities! Like the good old days, when my brothers, the Sams, thought harmless little puppies were cute, before Elgrin turned them into horrific, barking abominations.",
-        "temperature": 0.4,
-        "exaggeration": 0.9
+        "text": "This is a tactic! A goddamn psychological attack!",
+        "emotion": "angry",
+        "voice_id": "English_Debator",
+        "language_boost": "English",
+        "english_normalization": True,
+#        "pitch": -1
     }
 }
+
+
 
 # Send request
 response = requests.post(url, headers=headers, data=json.dumps(payload))
