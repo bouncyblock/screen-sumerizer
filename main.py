@@ -13,6 +13,7 @@
 from dotenv import load_dotenv
 from tkinter import Tk, StringVar
 from tkinter import ttk
+from obswebsocket import obsws, requests as obs_requests
 from utils import capture, encode_image, log, clear_screenshots, validate_keys, validate_inputs
 from textToSpeach import ttsPlay
 import pygame
@@ -132,7 +133,13 @@ def main(event=None):
         return
     if not validate_keys(ell_voice, "ell_voice", log_var):
         return
+    if not validate_keys(obs_password, "OBS_PASSWORD", log_var):
+        return
 
+    if obs_password.get():
+        global ws
+        ws = obsws("localhost", 4455, obs_password.get())
+        ws.connect()
     # run in background thread to prevent hanging
     thread = threading.Thread(target=main_worker, args=(userMonitor, userDelay), daemon=True)
     thread.start()
@@ -160,8 +167,23 @@ def main_worker(userMonitor, userDelay):
         
         if response:
             log(f"Status Code: {response.status_code}", log_var)
+            print(response.text)
         else:
             log("No response from AI", log_var)
+
+
+        if resultContent and obs_password.get():
+
+            # Update a text source named "AI_Text"
+            ws.call(obs_requests.SetInputSettings(
+                inputName="AI_Text",
+                inputSettings={"text": resultContent},
+                overlay=True
+            ))
+
+            #ws.disconnect()
+        else:
+            log("Failed to display on OBS", log_var)
         #log(resultContent, log_var)
 
         #pygame.mixer.music.stop()
@@ -173,7 +195,15 @@ def main_worker(userMonitor, userDelay):
             log("No content from AI response", log_var)
 
 
+        if obs_password.get():
+            ws.call(obs_requests.SetInputSettings(
+                inputName="AI_Text",
+                inputSettings={"text": "Waiting for next capture..."},
+                overlay=True
+            ))
+        
         log("Waiting for next capture...", log_var)
+
 
 # init11Labs()
 
@@ -231,6 +261,10 @@ ell_voice = StringVar()
 ell_voice_entry = ttk.Entry(mainframe, width=30, textvariable=ell_voice)
 ell_voice_entry.grid(column=2, row=6, sticky="W, E")
 
+obs_password = StringVar()
+obs_password_entry = ttk.Entry(mainframe, width=30, textvariable=obs_password, show="*")
+obs_password_entry.grid(column=2, row=7, sticky="W, E")
+
 chosen_method = StringVar()
 
 # ttk.Label(mainframe, text="Voice Method").grid(column=1, row=6, sticky=W)
@@ -240,7 +274,7 @@ voice_method_combo = ttk.Combobox(
     textvariable=chosen_method,
     values=["gtts", "elevenlabs"],#, "coqui"],
 )
-voice_method_combo.grid(column=2, row=7, sticky="W, E")
+voice_method_combo.grid(column=2, row=8, sticky="W, E")
 
 voice_method_combo.current(0)
 
@@ -255,7 +289,8 @@ ttk.Label(mainframe, text="delay? (in seconds)").grid(column=3, row=3, sticky="W
 ttk.Label(mainframe, text="AI API Key").grid(column=3, row=4, sticky="W")
 ttk.Label(mainframe, text="11 API Key").grid(column=3, row=5, sticky="W")
 ttk.Label(mainframe, text="11 Voice ID").grid(column=3, row=6, sticky="W")
-ttk.Label(mainframe, text="Voice Method").grid(column=3, row=7, sticky="W")
+ttk.Label(mainframe, text="OBS Password").grid(column=3, row=7, sticky="W")
+ttk.Label(mainframe, text="Voice Method").grid(column=3, row=8, sticky="W")
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
