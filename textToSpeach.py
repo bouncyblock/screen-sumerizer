@@ -101,16 +101,16 @@ def ttsPlay(file_path, method="gtts", log_var=None, extra=None):
             else:
                 log("Error generating ElevenLabs audio", log_var)
 
-        case "coqui":
-            log("Using coqui for audio...", log_var)
+        # case "coqui":
+        #     log("Using coqui for audio...", log_var)
 
-            ttsGenerate(file_path, method="coqui") # doesnt return audio file like others...
+        #     ttsGenerate(file_path, method="coqui") # doesnt return audio file like others...
 
-            pygame.mixer.music.load("temp/output.wav")
-            pygame.mixer.music.play()
+        #     pygame.mixer.music.load("temp/output.wav")
+        #     pygame.mixer.music.play()
             
-            while pygame.mixer.music.get_busy():
-                pygame.time.wait(100)
-                #root.update()  # keep Tkinter responsive while music plays
+        #     while pygame.mixer.music.get_busy():
+        #         pygame.time.wait(100)
+        #         #root.update()  # keep Tkinter responsive while music plays
 
-            pygame.mixer.music.unload()
+        #     pygame.mixer.music.unload()
